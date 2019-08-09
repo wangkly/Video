@@ -1,36 +1,73 @@
 package com.wangky.video;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.PermissionInfo;
-import android.net.Uri;
 import android.os.Bundle;
-
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.wangky.video.activities.PlayActivity;
+import com.wangky.video.adapter.VideoListAdapter;
+import com.wangky.video.beans.LocalVideoItem;
+import com.wangky.video.util.Utils;
 
-import java.security.Permission;
-import java.security.Permissions;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    private static final  int PERMISSION_REQUESTCODE = 1;
+
+
+    private RecyclerView mRecyclerView;
+
+
+    private VideoListAdapter adapter;
+
+
+
+    private View.OnClickListener mListener= new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            RecyclerView.ViewHolder holder = (RecyclerView.ViewHolder) v.getTag();
+
+
+            int position =  holder.getAdapterPosition();
+
+
+            LocalVideoItem item = adapter.getItemAtPosition(position);
+
+            Boolean orientation = item.getWidth() > item.getHeight() ? true : false;
+
+            String data = item.getData();
+
+            Intent intent = new Intent(MainActivity.this, PlayActivity.class);
+
+
+            intent.putExtra("orientation",orientation);
+
+            intent.putExtra("data",data);
+
+
+            startActivity(intent);
+
+
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +75,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+
+        if(null != actionBar){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_heart);
+        }
+
+
 
        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -49,34 +95,40 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        mRecyclerView = findViewById(R.id.video_list);
 
-        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED){
 
-            ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.INTERNET,Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED){
+
+            ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.INTERNET,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE},PERMISSION_REQUESTCODE);
+        }else {
+
+
+            remainOperation();
         }
 
-
-
-        PlayerView playerView = findViewById(R.id.player);
-
-        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(this);
-
-
-        playerView.setPlayer(player);
-
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this,"Video"));
-
-
-        MediaSource videoSource = new ProgressiveMediaSource.Factory(dataSourceFactory).
-                createMediaSource(Uri.parse("http://vodkgeyttp8.vod.126.net/cloudmusic/MjQ3NDQ3MjUw/89a6a279dc2acfcd068b45ce72b1f560/533e4183a709699d566180ed0cd9abe9.mp4?wsSecret=2ad199551c2bbe0ca6400810a2d6bb8d&wsTime=1564211922"));
-
-        player.setPlayWhenReady(true);
-        player.prepare(videoSource);
-
-
-
-
     }
+
+
+
+    public void remainOperation(){
+
+
+        List<LocalVideoItem> mlist = Utils.queryLocalVideos(getApplicationContext());
+
+        adapter= new VideoListAdapter(MainActivity.this,mlist,mListener);
+
+        GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this,2);
+
+
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(layoutManager);
+    }
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,6 +155,26 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode){
+
+            case PERMISSION_REQUESTCODE:
+
+                if(PackageManager.PERMISSION_GRANTED == grantResults[0]){
+
+                    remainOperation();
+
+                }
+
+                break;
+
+
+            default:
+
+
+                break;
+
+        }
+
     }
 }

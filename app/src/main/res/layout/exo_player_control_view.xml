@@ -3,6 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <LinearLayout
+        android:id="@+id/titleBar"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_heart"
+            />
+
+        <TextView
+            android:id="@+id/vtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+
+
     <ImageButton android:id="@id/exo_play"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -16,5 +39,22 @@
         android:layout_gravity="center"
         android:background="#CC000000"
         style="@style/ExoMediaButton.Pause"/>
+
+
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"/>
+
+
+    </LinearLayout>
+
 
 </FrameLayout>

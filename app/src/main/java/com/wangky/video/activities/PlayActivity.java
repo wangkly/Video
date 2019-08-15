@@ -4,10 +4,17 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GestureDetectorCompat;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -22,7 +29,45 @@ import com.wangky.video.R;
 public class PlayActivity extends AppCompatActivity {
 
 
+    private GestureDetectorCompat mGestureDetector;
+
     private SimpleExoPlayer player;
+
+    private ImageButton mBack;
+
+    private TextView mTitle;
+
+
+    private GestureDetector.SimpleOnGestureListener myGestureListener = new GestureDetector.SimpleOnGestureListener(){
+//        @Override
+//        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+//
+//            Log.d("-------->playing","scroll");
+//            return super.onScroll(e1, e2, distanceX, distanceY);
+//        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+
+            Log.i("-------->playing","onDoubleTap");
+            return super.onDoubleTap(e);
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            Log.d("-------->playing","onSingleTapUp");
+            return super.onSingleTapUp(e);
+        }
+
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+
+            Log.d("-------->playing","onSingleTapUp");
+
+            return super.onDown(e);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +78,9 @@ public class PlayActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_play);
+
+
+        mGestureDetector = new GestureDetectorCompat(PlayActivity.this,myGestureListener);
 
         Intent intent = getIntent();
 
@@ -64,6 +112,23 @@ public class PlayActivity extends AppCompatActivity {
         player.prepare(videoSource);
 
 
+        mBack = findViewById(R.id.m_back);
+
+        mTitle = findViewById(R.id.m_title);
+
+        mTitle.setText("video_player");
+
+        mBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                finish();
+
+            }
+        });
+
+
+
     }
 
     @Override
@@ -72,5 +137,18 @@ public class PlayActivity extends AppCompatActivity {
         player.release();
 
         super.onDestroy();
+    }
+
+
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if(mGestureDetector.onTouchEvent(event)){
+
+            return true;
+        }
+
+        return false;
     }
 }

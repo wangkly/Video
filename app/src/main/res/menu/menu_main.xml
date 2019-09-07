@@ -8,8 +8,8 @@
         android:icon="@drawable/ic_heart"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+    <item android:id="@+id/action_open"
+        android:title="@string/action_open"
         android:orderInCategory="100"
         app:showAsAction="never" />
 </menu>

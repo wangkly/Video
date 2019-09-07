@@ -1,73 +1,122 @@
 package com.wangky.video.activities;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GestureDetectorCompat;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.wangky.video.MyPlayerView;
 import com.wangky.video.R;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class PlayActivity extends AppCompatActivity {
 
 
-    private GestureDetectorCompat mGestureDetector;
-
     private SimpleExoPlayer player;
-
     private ImageButton mBack;
-
     private TextView mTitle;
+    private float mBrightness = -1f;
+    private AudioManager audioManager;
+    private int maxVolume = 0;
+    private int currentVolume = -1;
+
+    private LinearLayout brightness;
+
+    private LinearLayout volume_view;
+
+    private TextView br_percent;
+
+    private TextView vo_percent;
 
 
-    private GestureDetector.SimpleOnGestureListener myGestureListener = new GestureDetector.SimpleOnGestureListener(){
-//        @Override
-//        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-//
-//            Log.d("-------->playing","scroll");
-//            return super.onScroll(e1, e2, distanceX, distanceY);
-//        }
 
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler(){
         @Override
-        public boolean onDoubleTap(MotionEvent e) {
+        public void handleMessage(Message msg) {
+            float percent = (float) msg.obj;
+            switch (msg.what){
 
-            Log.i("-------->playing","onDoubleTap");
-            return super.onDoubleTap(e);
-        }
+                case 1:
 
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            Log.d("-------->playing","onSingleTapUp");
-            return super.onSingleTapUp(e);
-        }
+                    if(currentVolume == -1){
+                        currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+                        if(currentVolume < 0 ){
+                            currentVolume = 0;
+                        }
+                    }
+
+                    int volume = (int) (percent * maxVolume + currentVolume);
+                    if(volume > maxVolume){
+                        volume = maxVolume;
+                    }else if(volume < 0){
+                        volume =0;
+                    }
+
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,volume,0);
+
+                    volume_view.setVisibility(View.VISIBLE);
+                    vo_percent.setText((volume * 100) / maxVolume  +"%");
 
 
-        @Override
-        public boolean onDown(MotionEvent e) {
+                    break;
 
-            Log.d("-------->playing","onSingleTapUp");
+                case 2:
 
-            return super.onDown(e);
+                    if(mBrightness  < 0){
+                        mBrightness = getWindow().getAttributes().screenBrightness;
+                        if(mBrightness <= 0.00f){
+                            mBrightness = 0.50f;
+                        }
+                        if(mBrightness < 0.01f){
+                            mBrightness = 0.01f;
+                        }
+                    }
+
+                    WindowManager.LayoutParams lpa = getWindow().getAttributes();
+                    lpa.screenBrightness = mBrightness + percent;
+                    if (lpa.screenBrightness > 1.0f)
+                        lpa.screenBrightness = 1.0f;
+                    else if (lpa.screenBrightness < 0.01f)
+                        lpa.screenBrightness = 0.01f;
+                    getWindow().setAttributes(lpa);
+
+
+                    brightness.setVisibility(View.VISIBLE);
+                    br_percent.setText((int)(lpa.screenBrightness * 100) +"%");
+
+                    break;
+                case 0:
+                    endGesture();
+                    break;
+                default:
+
+                    break;
+            }
+
         }
     };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,12 +128,18 @@ public class PlayActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_play);
 
+        brightness = findViewById(R.id.brightness);
 
-        mGestureDetector = new GestureDetectorCompat(PlayActivity.this,myGestureListener);
+        volume_view = findViewById(R.id.volume);
+
+        br_percent = findViewById(R.id.br_percent);
+
+        vo_percent = findViewById(R.id.vo_percent);
 
         Intent intent = getIntent();
 
         String data = intent.getStringExtra("data");
+        String title = intent.getStringExtra("title");
 
         Boolean orientation = intent.getBooleanExtra("orientation",false);
 
@@ -95,7 +150,7 @@ public class PlayActivity extends AppCompatActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
-        PlayerView playerView = findViewById(R.id.player);
+        MyPlayerView playerView = findViewById(R.id.player);
 
         player = ExoPlayerFactory.newSimpleInstance(this);
 
@@ -108,15 +163,25 @@ public class PlayActivity extends AppCompatActivity {
         MediaSource videoSource = new ProgressiveMediaSource.Factory(dataSourceFactory).
                 createMediaSource(Uri.parse(data));
 
+
+     //m3u8
+//        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(this,"Video"));
+//        dataSourceFactory.getDefaultRequestProperties().set("Referer", "https://avgle.com/video/zr25L5m8q5C/dgl-008-%E9%9B%BB%E6%92%83%E7%A7%BB%E7%B1%8D-%E5%A5%87%E8%B7%A1%E3%81%AE%E7%BE%8E%E5%B7%A8%E4%B9%B3%E7%BE%8E%E5%B0%91%E5%A5%B3%E3%81%AB%E4%B8%80%E6%92%83%E5%A4%A7%E9%87%8F%E9%A1%94%E5%B0%84-%E9%88%B4%E6%9C%A8%E5%BF%83%E6%98%A5");
+//        Uri uri = Uri.parse("https://ip78766492.cdn.qooqlevideo.com/key=Dho5QowwW9bDWY+3BS6aYA,s=,end=1566618500,limit=2/data=1566618500/state=cBRS/referer=force,.avgle.com/reftag=56109644/media=hlsA/ssd6/177/1/179844431.m3u8");
+//
+//        HlsMediaSource videoSource =
+//                new HlsMediaSource.Factory(dataSourceFactory)
+//                        .setAllowChunklessPreparation(true)
+//                        .createMediaSource(uri);
+
         player.setPlayWhenReady(true);
         player.prepare(videoSource);
-
 
         mBack = findViewById(R.id.m_back);
 
         mTitle = findViewById(R.id.m_title);
 
-        mTitle.setText("video_player");
+        mTitle.setText(title);
 
         mBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,27 +193,32 @@ public class PlayActivity extends AppCompatActivity {
         });
 
 
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        playerView.setmHandler(handler);
 
     }
 
     @Override
     protected void onDestroy() {
-
         player.release();
-
         super.onDestroy();
     }
 
 
 
+    /** 手势结束 */
+    private void endGesture() {
+        currentVolume = -1;
+        mBrightness = -1f;
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if(mGestureDetector.onTouchEvent(event)){
+        // 隐藏
+        brightness.setVisibility(View.GONE);
+        volume_view.setVisibility(View.GONE);
 
-            return true;
-        }
-
-        return false;
     }
+
+
+
+
 }

@@ -8,12 +8,12 @@
     tools:context=".activities.PlayActivity">
 
 
-    <com.google.android.exoplayer2.ui.PlayerView
+    <com.wangky.video.MyPlayerView
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.google.android.exoplayer2.ui.PlayerView>
+    </com.wangky.video.MyPlayerView>
 
 
 

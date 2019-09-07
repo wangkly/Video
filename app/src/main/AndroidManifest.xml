@@ -13,9 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:theme="@style/AppTheme.NoActionBar"
             android:name=".activities.PlayActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -26,6 +26,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--<activity android:name=".activities.AvgleActivity" />-->
+        <!--<activity android:name=".activities.VideosActivity"-->
+            <!--android:theme="@style/AppTheme.NoActionBar" />-->
+        <!--<activity android:name=".activities.WebViewActivity"></activity>-->
     </application>
 
 </manifest>

@@ -19,7 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.wangky.video.activities.AvgleActivity;
 import com.wangky.video.activities.PlayActivity;
+import com.wangky.video.activities.VideosActivity;
 import com.wangky.video.adapter.VideoListAdapter;
 import com.wangky.video.beans.LocalVideoItem;
 import com.wangky.video.util.Utils;
@@ -53,13 +55,15 @@ public class MainActivity extends AppCompatActivity {
             Boolean orientation = item.getWidth() > item.getHeight() ? true : false;
 
             String data = item.getData();
+            String title = item.getTitle();
 
             Intent intent = new Intent(MainActivity.this, PlayActivity.class);
-
 
             intent.putExtra("orientation",orientation);
 
             intent.putExtra("data",data);
+
+            intent.putExtra("title",title);
 
 
             startActivity(intent);
@@ -146,7 +150,17 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
+            Intent intent = new Intent(MainActivity.this,VideosActivity.class);
+
+            startActivity(intent);
+
             return true;
+        }
+
+        if(id == R.id.favor){
+            Intent intent = new Intent(MainActivity.this,AvgleActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

@@ -15,6 +15,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.wangky.video.activities.PlayActivity;
 import com.wangky.video.adapter.VideoListAdapter;
 import com.wangky.video.beans.LocalVideoItem;
+import com.wangky.video.task.DownloadTask;
+import com.wangky.video.util.FileUtils;
 import com.wangky.video.util.Utils;
 
 import java.util.List;
@@ -174,7 +176,15 @@ public class MainActivity extends AppCompatActivity {
                 switch (requestCode){
                     case OPEN_FILE_MANAGER:
                         Uri uri = data.getData();
+                        String path = FileUtils.getFilePathByUri(MainActivity.this,uri);
                         System.out.println(uri.getPath());
+                        System.out.println(path);
+
+                        DownloadTask task = new DownloadTask();
+
+                        task.execute(path);
+
+
 
                         break;
 

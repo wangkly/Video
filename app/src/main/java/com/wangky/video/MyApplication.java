@@ -13,7 +13,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = getApplicationContext();
-        XLTaskHelper.init(this);
+        XLTaskHelper.init(getApplicationContext());
     }
 
     public static Context getInstance() {

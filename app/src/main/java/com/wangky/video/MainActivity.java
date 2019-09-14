@@ -13,11 +13,13 @@ import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.wangky.video.activities.PlayActivity;
+import com.wangky.video.activities.TorrentDetailActivity;
 import com.wangky.video.adapter.VideoListAdapter;
 import com.wangky.video.beans.LocalVideoItem;
 import com.wangky.video.task.DownloadTask;
 import com.wangky.video.util.FileUtils;
 import com.wangky.video.util.Utils;
+import com.xunlei.downloadlib.XLTaskHelper;
 
 import java.util.List;
 
@@ -41,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
 
     private VideoListAdapter adapter;
-
 
 
     private View.OnClickListener mListener= new View.OnClickListener() {
@@ -97,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
         }else {
             remainOperation();
         }
+
+
 
     }
 
@@ -172,28 +175,29 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-            if(resultCode == Activity.RESULT_OK){
-                switch (requestCode){
-                    case OPEN_FILE_MANAGER:
-                        Uri uri = data.getData();
-                        String path = FileUtils.getFilePathByUri(MainActivity.this,uri);
-                        System.out.println(uri.getPath());
-                        System.out.println(path);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case OPEN_FILE_MANAGER:
+                    Uri uri = data.getData();
+                    String path = FileUtils.getFilePathByUri(MainActivity.this, uri);
 
-                        DownloadTask task = new DownloadTask();
+                    Intent intent = new Intent(MainActivity.this,TorrentDetailActivity.class);
+                    intent.putExtra("type","torrent");
+                    intent.putExtra("path",path);
 
-                        task.execute(path);
+                    startActivity(intent);
+//                    DownloadTask task = new DownloadTask(MainActivity.this);
+//                    task.execute(path);
+
+                    break;
 
 
+                default:
 
-                        break;
-
-
-                     default:
-
-                         break;
-                }
+                    break;
             }
+        }
     }
 
 

@@ -16,10 +16,8 @@ import com.wangky.video.activities.PlayActivity;
 import com.wangky.video.activities.TorrentDetailActivity;
 import com.wangky.video.adapter.VideoListAdapter;
 import com.wangky.video.beans.LocalVideoItem;
-import com.wangky.video.task.DownloadTask;
 import com.wangky.video.util.FileUtils;
 import com.wangky.video.util.Utils;
-import com.xunlei.downloadlib.XLTaskHelper;
 
 import java.util.List;
 
@@ -80,14 +78,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-       FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//       FloatingActionButton fab = findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         mRecyclerView = findViewById(R.id.video_list);
 

@@ -34,6 +34,7 @@ public class PlayActivity extends AppCompatActivity {
     private SimpleExoPlayer player;
     private ImageButton mBack;
     private TextView mTitle;
+    private ImageButton mToggle;
     private float mBrightness = -1f;
     private AudioManager audioManager;
     private int maxVolume = 0;
@@ -181,17 +182,17 @@ public class PlayActivity extends AppCompatActivity {
 
         mTitle = findViewById(R.id.m_title);
 
+        mToggle = findViewById(R.id.exo_toggle);
+
         mTitle.setText(title);
 
-        mBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mBack.setOnClickListener(v -> finish());
 
-                finish();
+        mToggle.setOnClickListener(v->{
 
-            }
+
+
         });
-
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);

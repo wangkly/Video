@@ -21,7 +21,7 @@
             android:id="@+id/f_size"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:text="size"/>
 
     </LinearLayout>
@@ -32,6 +32,8 @@
         android:id="@+id/f_play"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/ic_play"/>
+        android:src="@drawable/ic_play"
+        android:visibility="gone"
+        android:background="#00000000"/>
 
 </LinearLayout>

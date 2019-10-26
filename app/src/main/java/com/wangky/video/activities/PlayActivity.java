@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,15 +28,21 @@ import com.google.android.exoplayer2.util.Util;
 import com.wangky.video.MyPlayerView;
 import com.wangky.video.R;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class PlayActivity extends AppCompatActivity {
+
+    private final String TAG = "PlayActivity.class";
 
 
     private SimpleExoPlayer player;
     private ImageButton mBack;
     private TextView mTitle;
     private ImageButton mToggle;
+    //是否横屏播放
+    private Boolean mLOrientation =false ;
+
     private float mBrightness = -1f;
     private AudioManager audioManager;
     private int maxVolume = 0;
@@ -58,7 +66,6 @@ public class PlayActivity extends AppCompatActivity {
             switch (msg.what){
 
                 case 1:
-
                     if(currentVolume == -1){
                         currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
@@ -121,45 +128,38 @@ public class PlayActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
         //隐藏title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //设置全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         setContentView(R.layout.activity_play);
-
         brightness = findViewById(R.id.brightness);
-
         volume_view = findViewById(R.id.volume);
-
         br_percent = findViewById(R.id.br_percent);
-
         vo_percent = findViewById(R.id.vo_percent);
+        mBack = findViewById(R.id.m_back);
+        mTitle = findViewById(R.id.m_title);
+        mToggle = findViewById(R.id.exo_toggle);
 
         Intent intent = getIntent();
-
         String data = intent.getStringExtra("data");
         String title = intent.getStringExtra("title");
-
-        Boolean orientation = intent.getBooleanExtra("orientation",false);
-
+        Boolean orientation = intent.getBooleanExtra("LOrientation",false);
         if(orientation){
             //横屏
+            mLOrientation = true;
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }else {
+            mLOrientation = false;
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
         MyPlayerView playerView = findViewById(R.id.player);
-
         player = ExoPlayerFactory.newSimpleInstance(this);
-
-
         playerView.setPlayer(player);
-
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this,"Video"));
-
 
         MediaSource videoSource = new ProgressiveMediaSource.Factory(dataSourceFactory).
                 createMediaSource(Uri.parse(data));
@@ -178,20 +178,18 @@ public class PlayActivity extends AppCompatActivity {
         player.setPlayWhenReady(true);
         player.prepare(videoSource);
 
-        mBack = findViewById(R.id.m_back);
-
-        mTitle = findViewById(R.id.m_title);
-
-        mToggle = findViewById(R.id.exo_toggle);
-
         mTitle.setText(title);
-
         mBack.setOnClickListener(v -> finish());
 
         mToggle.setOnClickListener(v->{
-
-
-
+            if(mLOrientation){
+                //横屏切换竖屏
+                mLOrientation = false;
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }else{
+                mLOrientation = true;
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
         });
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -220,6 +218,23 @@ public class PlayActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        //横竖屏切换的时候会导致activity 被销毁后重新创建，导致onCreate方法重新被执行
+        //重写这个方法后会导致onCreate 不会重新执行 https://www.jianshu.com/p/8c40829905ec
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation==Configuration.ORIENTATION_LANDSCAPE){
+//横屏
+            Log.i(TAG, "onConfigurationChanged: 横屏"+newConfig.orientation);
+        }else if (newConfig.orientation==Configuration.ORIENTATION_PORTRAIT){
+//竖屏
+            Log.i(TAG, "onConfigurationChanged: 竖屏"+newConfig.orientation);
+        }else if (newConfig.orientation==Configuration.ORIENTATION_UNDEFINED){
+//默认
+            Log.i(TAG, "onConfigurationChanged: 默认"+newConfig.orientation);
+        }
+
+    }
 
 
 }

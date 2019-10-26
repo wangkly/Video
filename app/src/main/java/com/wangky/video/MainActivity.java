@@ -6,12 +6,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.wangky.video.activities.DownloadActivity;
+import com.wangky.video.activities.MagnetActivity;
 import com.wangky.video.activities.PlayActivity;
 import com.wangky.video.activities.TorrentDetailActivity;
 import com.wangky.video.adapter.VideoListAdapter;
@@ -42,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
     private VideoListAdapter adapter;
 
+    private long time = 0;
+
 
     private View.OnClickListener mListener= new View.OnClickListener() {
         @Override
@@ -50,12 +56,12 @@ public class MainActivity extends AppCompatActivity {
             int position =  holder.getAdapterPosition();
 
             LocalVideoItem item = adapter.getItemAtPosition(position);
-            Boolean orientation = item.getWidth() > item.getHeight() ? true : false;
+            Boolean LOrientation = item.getWidth() > item.getHeight();//是否横屏播放
             String data = item.getData();
             String title = item.getTitle();
 
             Intent intent = new Intent(MainActivity.this, PlayActivity.class);
-            intent.putExtra("orientation",orientation);
+            intent.putExtra("LOrientation",LOrientation);
             intent.putExtra("data",data);
             intent.putExtra("title",title);
             startActivity(intent);
@@ -70,12 +76,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
+//        ActionBar actionBar = getSupportActionBar();
 
-        if(null != actionBar){
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_heart);
-        }
+//        if(null != actionBar){
+//            actionBar.setDisplayHomeAsUpEnabled(true);
+//            actionBar.setHomeAsUpIndicator(R.drawable.ic_heart);
+//        }
 
 
 //       FloatingActionButton fab = findViewById(R.id.fab);
@@ -144,9 +150,14 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        if(id == R.id.favor){
-//            Intent intent = new Intent(MainActivity.this,AvgleActivity.class);
-//            startActivity(intent);
+        if(id == R.id.download){
+            Intent intent = new Intent(MainActivity.this, DownloadActivity.class);
+            startActivity(intent);
+        }
+
+        if(id == R.id.action_magnet){
+            Intent intent = new Intent(MainActivity.this, MagnetActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -199,6 +210,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){ //按下返回键
+            if(System.currentTimeMillis() - time > 1000){
+                Toast.makeText(this,R.string.back_home_tip,Toast.LENGTH_LONG).show();
+                time = System.currentTimeMillis();
+            }else {
+                 Intent intent = new Intent(Intent.ACTION_MAIN);
+                 intent.addCategory(Intent.CATEGORY_HOME);
+                 startActivity(intent);
+            }
 
+            return true;
+        }
 
+        return super.onKeyDown(keyCode, event);
+    }
 }

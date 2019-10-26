@@ -8,6 +8,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.wangky.video.R;
+import com.wangky.video.util.FileUtils;
 import com.xunlei.downloadlib.parameter.TorrentFileInfo;
 
 import java.util.List;
@@ -52,7 +53,12 @@ public class TorrentFileListAdapter extends RecyclerView.Adapter<TorrentFileList
 
         TorrentFileInfo fileInfo = mFlieList.get(position);
         holder.fTitle.setText(fileInfo.mFileName);
-
+        String fileSize = FileUtils.getFileSize(fileInfo.mFileSize);
+        holder.fSize.setText(fileSize);
+        boolean isVideo = FileUtils.isVideoFile(fileInfo.mFileName);
+        if(isVideo){
+            holder.imgBtn.setVisibility(View.VISIBLE);
+        }
     }
 
 

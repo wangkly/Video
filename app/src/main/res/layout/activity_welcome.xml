@@ -4,19 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.TorrentDetailActivity">
+    tools:context=".activities.WelcomeActivity">
 
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:id="@+id/file_list"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </androidx.recyclerview.widget.RecyclerView>
-
-
+        android:layout_height="match_parent"
+        android:background="@drawable/login_bg"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

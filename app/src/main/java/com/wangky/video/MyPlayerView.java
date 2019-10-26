@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
@@ -120,6 +121,9 @@ public class MyPlayerView extends PlayerView {
     public void init(){
         mGestureDetector = new GestureDetectorCompat(getContext(),myGestureListener);
         WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+//        DisplayMetrics dm = new DisplayMetrics();
+//        windowManager.getDefaultDisplay().getMetrics(dm);
+//        dm.widthPixels;
 
         Display disp =  windowManager.getDefaultDisplay();
          windowWidth = disp.getWidth();

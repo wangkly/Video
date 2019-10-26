@@ -1,6 +1,9 @@
 <resources>
-    <string name="app_name">Video</string>
+    <string name="app_name">VPlayer</string>
     <string name="action_settings">Settings</string>
     <string name="cover">cover</string>
-    <string name="action_open">open</string>
+    <string name="action_open">打开种子</string>
+    <string name="action_magnet">磁力链接</string>
+    <string name="action_analysis">解析</string>
+    <string name="back_home_tip">再按一次返回桌面</string>
 </resources>

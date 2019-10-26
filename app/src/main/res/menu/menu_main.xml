@@ -3,13 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.wangky.video.MainActivity" >
 
-    <item android:id="@+id/favor"
-        android:title="favor"
-        android:icon="@drawable/ic_heart"
+    <item android:id="@+id/download"
+        android:title="download"
+        android:icon="@drawable/ic_download"
         app:showAsAction="ifRoom" />
 
     <item android:id="@+id/action_open"
         android:title="@string/action_open"
         android:orderInCategory="100"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_magnet"
+        android:title="@string/action_magnet"
+        android:orderInCategory="150"
+        app:showAsAction="never"/>
 </menu>

@@ -6,13 +6,16 @@ import android.os.Bundle;
 
 import com.wangky.video.R;
 
-public class MagnetActivity extends AppCompatActivity {
+public class DownloadActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_magnet);
-        setTitle(R.string.action_magnet);
+        setContentView(R.layout.activity_download);
+        setTitle("下载列表");
+
+
+
 
 
 

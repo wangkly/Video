@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.wangky.video.R;
 import com.wangky.video.adapter.TorrentFileListAdapter;
+import com.wangky.video.util.FileUtils;
 import com.xunlei.downloadlib.XLTaskHelper;
 import com.xunlei.downloadlib.parameter.TorrentFileInfo;
 import com.xunlei.downloadlib.parameter.TorrentInfo;
@@ -83,13 +84,16 @@ public class TorrentDetailActivity extends AppCompatActivity {
          type = intent.getStringExtra("type");
          path = intent.getStringExtra("path");
 
+         String fileFolder = FileUtils.getFileName(path);
+
         //选取种子文件
         if(type.equalsIgnoreCase("torrent")){
             TorrentInfo info = mTaskHelper.getTorrentInfo(path);
+            fileFolder = info.mMultiFileBaseFolder;
+
             TorrentFileInfo[] fileArr = info.mSubFileInfo;
             mList = Arrays.asList(fileArr);
             mAdapter.addFiles(mList);
-
 
         }else if(type.equalsIgnoreCase("url")) {
 
@@ -98,7 +102,7 @@ public class TorrentDetailActivity extends AppCompatActivity {
         }
 
 
-        DownloadDir = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "MyVideoDownload";
+        DownloadDir = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "MyVideoDownload"+File.separator+fileFolder;
 
         File file = new File(DownloadDir);
 

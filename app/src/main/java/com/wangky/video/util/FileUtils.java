@@ -9,6 +9,10 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+
 public final class FileUtils {
 
     public static String getFilePathByUri(Context context, Uri uri) {
@@ -120,5 +124,57 @@ public final class FileUtils {
     private static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
+
+
+
+    public static String getFileName(String path){
+        String name = path;
+        int start = path.lastIndexOf("/");
+        int end = path.lastIndexOf(".");
+        if(start != -1 && end != -1){
+            name = path.substring(start+1,end);
+        }
+
+        return name;
+    }
+
+    /**
+     * 获取文件大小 kb,mb,gb
+     * @param size
+     * @return
+     */
+    public static String getFileSize(long size){
+        long value = size;
+        if(value < 1024){
+            return size +"B";
+        }else {
+            value = new BigDecimal(value / 1024).setScale(2,BigDecimal.ROUND_DOWN).longValue();
+        }
+
+        if(value < 1024){//kb
+            return value + "KB";
+        }else {
+            value = new BigDecimal(value / 1024).setScale(2,BigDecimal.ROUND_DOWN).longValue();
+        }
+
+        if(value < 1024){ // MB
+            return value +"MB";
+        }else {
+            value = new BigDecimal(value / 1024).setScale(2,BigDecimal.ROUND_DOWN).longValue();
+            return value + "GB";
+        }
+    }
+
+
+
+    public static boolean isVideoFile(String fileName){
+        int start = fileName.lastIndexOf(".");
+        String suffix = fileName.substring(start + 1);
+        String[] common={"mp4","avi","rmvb","mkv"};
+        List names = Arrays.asList(common);
+        return names.contains(suffix);
+    }
+
+
 
 }

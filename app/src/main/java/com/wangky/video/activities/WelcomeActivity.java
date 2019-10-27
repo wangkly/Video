@@ -31,7 +31,7 @@ public class WelcomeActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_welcome);
 
-        mDbHelper = new DBHelper(this);
+        mDbHelper = DBHelper.getInstance();
 
         //权限获取助手
         mPermissionHelper = new PermissionHelper(this);

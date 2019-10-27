@@ -7,6 +7,9 @@ import android.view.View;
 
 import com.wangky.video.R;
 import com.wangky.video.adapter.TorrentFileListAdapter;
+import com.wangky.video.model.DownLoadModel;
+import com.wangky.video.model.DownLoadModelImp;
+import com.wangky.video.util.Const;
 import com.wangky.video.util.FileUtils;
 import com.xunlei.downloadlib.XLTaskHelper;
 import com.xunlei.downloadlib.parameter.TorrentFileInfo;
@@ -37,7 +40,9 @@ public class TorrentDetailActivity extends AppCompatActivity {
 
     private String type;
 
-    private String path;
+    private String path;//种子文件所在地址
+
+    private DownLoadModel downLoadModel;
 
     private View.OnClickListener mListener = new View.OnClickListener() {
         @Override
@@ -45,20 +50,18 @@ public class TorrentDetailActivity extends AppCompatActivity {
           RecyclerView.ViewHolder holder = (RecyclerView.ViewHolder) v.getTag();
           int position = holder.getAdapterPosition();
             TorrentFileInfo file = mList.get(position);
-            long taskId;
-            if(type.equalsIgnoreCase("torrent")){
-                try {
-                    taskId = mTaskHelper.addTorrentTask(path,DownloadDir,new int[]{file.mFileIndex});
-//                    String mPlayUrl = mTaskHelper.getLocalUrl(DownloadDir+File.separator+file.mFileName);
-                    XLTaskInfo task = mTaskHelper.getTaskInfo(taskId);
-                    System.out.println(task.mDownloadSpeed);
+            long taskId = 0;
+//            try {
+//                taskId = mTaskHelper.addTorrentTask(path,DownloadDir,new int[]{file.mFileIndex});
+////                    String mPlayUrl = mTaskHelper.getLocalUrl(DownloadDir+File.separator+file.mFileName);
+//                XLTaskInfo task = mTaskHelper.getTaskInfo(taskId);
+//                System.out.println(task.mDownloadSpeed);
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-
+            downLoadModel.startTorrentTask(path,new int[]{file.mFileIndex});
 
         }
     };
@@ -77,7 +80,7 @@ public class TorrentDetailActivity extends AppCompatActivity {
         mFileListView.setAdapter(mAdapter);
         mFileListView.setLayoutManager(layoutManager);
         mFileListView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-
+        downLoadModel=new DownLoadModelImp();
 
         mTaskHelper= XLTaskHelper.instance(this);
         Intent intent = getIntent();
@@ -102,7 +105,7 @@ public class TorrentDetailActivity extends AppCompatActivity {
         }
 
 
-        DownloadDir = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "MyVideoDownload"+File.separator+fileFolder;
+        DownloadDir = Const.File_SAVE_PATH +File.separator+fileFolder;
 
         File file = new File(DownloadDir);
 

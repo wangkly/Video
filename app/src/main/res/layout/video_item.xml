@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    app:cardCornerRadius="4dp">
+    app:cardCornerRadius="4dp"
+    android:background="@drawable/item_selectable_bg">
 
     <LinearLayout
         android:orientation="vertical"
@@ -29,6 +30,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_margin="5dp"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:marqueeRepeatLimit="-1"
+        android:focusableInTouchMode="true"
         android:textSize="17sp"/>
 
     </LinearLayout>

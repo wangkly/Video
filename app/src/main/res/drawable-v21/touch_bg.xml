@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--水波纹 5.0以上-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/LightGrey">
+    <item android:drawable="@color/white" />
+</ripple>

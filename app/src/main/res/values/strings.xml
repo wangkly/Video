@@ -6,4 +6,9 @@
     <string name="action_magnet">磁力链接</string>
     <string name="action_analysis">解析</string>
     <string name="back_home_tip">再按一次返回桌面</string>
+    <string name="file_name">文件名</string>
+    <string name="total_size">文件大小</string>
+    <string name="download_size">已下载</string>
+    <string name="download_speed">下载速度:</string>
+    <string name="percent">100%</string>
 </resources>

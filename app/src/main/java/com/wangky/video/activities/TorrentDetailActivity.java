@@ -60,7 +60,6 @@ public class TorrentDetailActivity extends AppCompatActivity {
 //            } catch (Exception e) {
 //                e.printStackTrace();
 //            }
-
             downLoadModel.startTorrentTask(path,new int[]{file.mFileIndex});
 
         }

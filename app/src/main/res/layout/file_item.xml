@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@drawable/touch_bg">
 
     <LinearLayout
         android:layout_weight="1"
@@ -14,7 +15,7 @@
             android:id="@+id/file_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:text="title"/>
 
         <TextView

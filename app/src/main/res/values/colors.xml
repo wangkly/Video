@@ -5,4 +5,8 @@
     <color name="colorAccent">#D81B60</color>
     <color name="white">#ffffff</color>
     <color name="DodgerBlue">#1E90FF</color>
+    <color name="WhiteSmoke">#F5F5F5</color>
+    <color name="Silver">#C0C0C0</color>
+    <color name="LightGrey">#D3D3D3</color>
+    <color name="DarkGray">#A9A9A9</color>
 </resources>

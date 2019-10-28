@@ -87,6 +87,7 @@ public class DBTools {
               entity.setTaskId(cursor.getLong(cursor.getColumnIndex("taskId")));
               entity.setmTaskStatus(cursor.getInt(cursor.getColumnIndex("mTaskStatus")));
               entity.setmFileSize(cursor.getLong(cursor.getColumnIndex("mFileSize")));
+              entity.setmFileName(cursor.getString(cursor.getColumnIndex("mFileName")));
               entity.setTaskType(cursor.getInt(cursor.getColumnIndex("taskType")));
               entity.setUrl(cursor.getString(cursor.getColumnIndex("url")));
               entity.setLocalPath(cursor.getString(cursor.getColumnIndex("localPath")));

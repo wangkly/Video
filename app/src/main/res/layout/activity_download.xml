@@ -6,4 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".activities.DownloadActivity">
 
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/downloadList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

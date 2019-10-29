@@ -61,4 +61,11 @@ public class Const {
 
     public final static String SEARCH_SORT_HOT = "hot";
     public final static String SEARCH_SORT_DATE = "date";
+
+
+
+    public final static String UPDATE_DOWNLOAD_UI = "com.wangkly.video.updateUI";
+
+
+
 }

@@ -16,6 +16,7 @@ import com.wangky.video.beans.DownloadTaskEntity;
 import com.wangky.video.util.FileUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapter.ItemViewHolder> {
@@ -26,9 +27,13 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
     private List<DownloadTaskEntity> mTasks;
 
 
-    public DownloadListAdapter(Context mContext, List<DownloadTaskEntity> mTasks) {
+    private OnOperationBtnClick mBtnClick;
+
+
+    public DownloadListAdapter(Context mContext, List<DownloadTaskEntity> mTasks, OnOperationBtnClick mBtnClick) {
         this.mContext = mContext;
         this.mTasks = mTasks;
+        this.mBtnClick = mBtnClick;
     }
 
     @NonNull
@@ -51,7 +56,7 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         holder.speed.setText(FileUtils.getFileSize(entity.getmDownloadSpeed()));
 
         BigDecimal percent = new BigDecimal(entity.getmDownloadSize())
-                .divide(new BigDecimal(entity.getmFileSize()))
+                .divide(new BigDecimal(entity.getmFileSize()),2, RoundingMode.HALF_UP)
                 .setScale(2,BigDecimal.ROUND_DOWN);
         holder.percent.setText(String.valueOf(percent));
         holder.progressBar.setProgress(percent.intValue());
@@ -67,7 +72,7 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
 
 
 
-    public class ItemViewHolder extends RecyclerView.ViewHolder{
+    public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private TextView fileName;
         private TextView totalSize;
@@ -94,9 +99,48 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
             delete = itemView.findViewById(R.id.delete);
 
             progressBar = itemView.findViewById(R.id.down_progress);
+
+            start.setOnClickListener(this);
+            pause.setOnClickListener(this);
+            delete.setOnClickListener(this);
         }
 
 
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            DownloadTaskEntity entity = mTasks.get(position);
+            switch (v.getId()){
+                case R.id.delete:
+                    mBtnClick.onDelete(entity);
+                    break;
+                case R.id.down_start:
+                    mBtnClick.onStart(entity);
+                    start.setVisibility(View.GONE);
+                    pause.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.pause:
+                    mBtnClick.onPause(entity);
+                    start.setVisibility(View.VISIBLE);
+                    pause.setVisibility(View.GONE);
+                    break;
+                default:
+                    break;
+
+            }
+        }
+    }
+
+
+
+
+    public interface OnOperationBtnClick{
+
+        void onDelete(DownloadTaskEntity task);
+
+        void onStart(DownloadTaskEntity task);
+
+        void onPause(DownloadTaskEntity task);
 
     }
 

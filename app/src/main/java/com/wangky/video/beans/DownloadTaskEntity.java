@@ -2,9 +2,10 @@ package com.wangky.video.beans;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class DownloadTaskEntity {
+public class DownloadTaskEntity implements Serializable {
     private int id;
     private long taskId;
     private int mTaskStatus;

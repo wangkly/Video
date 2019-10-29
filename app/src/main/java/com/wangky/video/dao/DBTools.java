@@ -13,15 +13,19 @@ import java.util.List;
 
 public class DBTools {
 
+   private static DBTools mDBTools;
+
    private SQLiteDatabase db;
 
 
-    public DBTools() {
+    private DBTools() {
         this.db = DBHelper.getInstance().db();
     }
 
     public static DBTools getInstance(){
-
+        if(null != mDBTools){
+            return mDBTools;
+        }
        return new DBTools();
    }
 
@@ -56,10 +60,29 @@ public class DBTools {
 
 
     public boolean saveOrUpdate(DownloadTaskEntity entity){
-
+        int id = entity.getId();
         boolean result = false;
+        ContentValues values = new ContentValues();
+        values.put("taskId",entity.getTaskId());
+        values.put("mTaskStatus",entity.getmTaskStatus());
+        values.put("mFileSize",entity.getmFileSize());
+        values.put("mFileName",entity.getmFileName());
+        values.put("taskType",entity.getTaskType());
+        values.put("url",entity.getUrl());
+        values.put("localPath",entity.getLocalPath());
+        values.put("mDownloadSize",entity.getmDownloadSize());
+        values.put("mDownloadSpeed",entity.getmDownloadSpeed());
+        values.put("mDCDNSpeed",entity.getmDCDNSpeed());
+        values.put("hash",entity.getHash());
+        values.put("isFile",entity.getFile() ? 1:0);
+        values.put("createDate",entity.getCreateDate().getTime());
+        values.put("thumbnailPath",entity.getThumbnailPath());
 
+        long count= db.update("download",values,"id = ?",new String[]{String.valueOf(id)});
 
+        if(count != -1){
+            result =true;
+        }
 
         return result;
     }
@@ -68,8 +91,8 @@ public class DBTools {
 
 
     public void delete(DownloadTaskEntity entity){
-
-
+        int id = entity.getId();
+        db.delete("download","id = ?",new String[]{String.valueOf(id)});
    }
 
 

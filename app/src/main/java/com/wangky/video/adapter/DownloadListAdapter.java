@@ -53,12 +53,12 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         holder.totalSize.setText(FileUtils.getFileSize(entity.getmFileSize()));
         holder.downloadSize.setText(FileUtils.getFileSize(entity.getmDownloadSize()));
 
-        holder.speed.setText(FileUtils.getFileSize(entity.getmDownloadSpeed()));
+        holder.speed.setText(FileUtils.downloadSpeed(entity.getmDownloadSpeed()));
 
         BigDecimal percent = new BigDecimal(entity.getmDownloadSize())
-                .divide(new BigDecimal(entity.getmFileSize()),2, RoundingMode.HALF_UP)
+                .divide(new BigDecimal(entity.getmFileSize() != 0 ? entity.getmFileSize() : 1L),2, RoundingMode.HALF_UP)
                 .setScale(2,BigDecimal.ROUND_DOWN);
-        holder.percent.setText(String.valueOf(percent));
+        holder.percent.setText(String.valueOf(percent)+"%");
         holder.progressBar.setProgress(percent.intValue());
 
     }
@@ -83,6 +83,7 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         private ImageButton start;
         private ImageButton pause;
         private ImageButton delete;
+        private ImageButton play;
 
         private ProgressBar progressBar;
 
@@ -97,12 +98,14 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
             start = itemView.findViewById(R.id.down_start);
             pause = itemView.findViewById(R.id.pause);
             delete = itemView.findViewById(R.id.delete);
+            play = itemView.findViewById(R.id.play);
 
             progressBar = itemView.findViewById(R.id.down_progress);
 
             start.setOnClickListener(this);
             pause.setOnClickListener(this);
             delete.setOnClickListener(this);
+            play.setOnClickListener(this);
         }
 
 
@@ -124,6 +127,9 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
                     start.setVisibility(View.VISIBLE);
                     pause.setVisibility(View.GONE);
                     break;
+                case R.id.play:
+                    mBtnClick.onPlay(entity);
+                    break;
                 default:
                     break;
 
@@ -142,6 +148,7 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
 
         void onPause(DownloadTaskEntity task);
 
+        void onPlay(DownloadTaskEntity task);
     }
 
 

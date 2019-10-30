@@ -211,4 +211,11 @@ public class DownLoadModelImp implements DownLoadModel {
         }
         return list;
     }
+
+
+    @Override
+    public String getLocalUrl(String filePath) {
+        String path = XLTaskHelper.instance(MyApplication.getInstance()).getLocalUrl(filePath);
+        return path;
+    }
 }

@@ -76,6 +76,14 @@ public class UpdateUI {
 
             LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
 
+        }else{
+            //通知activity 更新
+            Intent intent = new Intent(Const.UPDATE_DOWNLOAD_UI);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("data", new ArrayList<>());
+            intent.putExtras(bundle);
+            LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
+
         }
     }
 

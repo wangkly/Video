@@ -20,6 +20,8 @@ import com.xunlei.downloadlib.parameter.TorrentInfo;
 import com.xunlei.downloadlib.parameter.XLTaskInfo;
 import com.xunlei.downloadlib.parameter.XLTaskLocalUrl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -174,7 +176,7 @@ public class XLTaskHelper {
      * @return
      * @throws Exception
      */
-    public synchronized long addTorrentTask(String torrentPath,String savePath,int []indexs) throws Exception {
+    public synchronized long addTorrentTask2(String torrentPath,String savePath,int []indexs) throws Exception {
         TorrentInfo torrentInfo = new TorrentInfo();
         XLDownloadManager.getInstance().getTorrentInfo(torrentPath,torrentInfo);
         TorrentFileInfo[] fileInfos = torrentInfo.mSubFileInfo;
@@ -205,6 +207,69 @@ public class XLTaskHelper {
 //        return currentFileInfo;
         return getTaskId.getTaskId();
     }
+
+
+
+    /**
+     * 选择子任务时取反
+     * 添加种子下载任务,如果是磁力链需要先通过addMagentTask将种子下载下来
+     * @param torrentPath 种子地址
+     * @param savePath 保存路径
+     * @param indexs 需要下载的文件索引
+     * @return
+     * @throws Exception
+     */
+    public synchronized long addTorrentTask(String torrentPath,String savePath,int []indexs) throws Exception {
+        TorrentInfo torrentInfo = new TorrentInfo();
+        XLDownloadManager.getInstance().getTorrentInfo(torrentPath,torrentInfo);
+        TorrentFileInfo[] fileInfos = torrentInfo.mSubFileInfo;
+        BtTaskParam taskParam = new BtTaskParam();
+        taskParam.setCreateMode(1);
+        taskParam.setFilePath(savePath);
+        taskParam.setMaxConcurrent(3);
+        taskParam.setSeqId(seq.incrementAndGet());
+        taskParam.setTorrentPath(torrentPath);
+        GetTaskId getTaskId = new GetTaskId();
+        XLDownloadManager.getInstance().createBtTask(taskParam,getTaskId);
+        if(fileInfos.length > 1 && indexs != null && indexs.length > 0) {
+            //取选中的文件以外的文件，取反
+            List<Integer> deSelected = new ArrayList<>();
+            for (int i = 0 ;i <fileInfos.length;i++){
+                int j = fileInfos[i].mFileIndex;
+                boolean contain = false;
+                for(int m = 0; m < indexs.length ;m++){
+                    if(j == indexs[m]){
+                        contain = true;
+                        break;
+                    }
+                }
+
+                if(!contain){ //不在选中的项目里
+                    deSelected.add(Integer.valueOf(j));
+                }
+            }
+
+            BtIndexSet btIndexSet = new BtIndexSet(deSelected.size());
+            int i = 0;
+            for(i = 0; i < deSelected.size(); i++) {
+                btIndexSet.mIndexSet[i] = deSelected.get(i).intValue();
+            }
+            //反向选取
+            XLDownloadManager.getInstance().deselectBtSubTask(getTaskId.getTaskId(),btIndexSet);
+        }
+        XLDownloadManager.getInstance().setTaskLxState(getTaskId.getTaskId(), 0, 1);
+//        XLDownloadManager.getInstance().startDcdn(getTaskId.getTaskId(), currentFileInfo.mRealIndex, "", "", "");
+        XLDownloadManager.getInstance().startTask(getTaskId.getTaskId(), false);
+//        XLDownloadManager.getInstance().setBtPriorSubTask(getTaskId.getTaskId(),currentFileInfo.mRealIndex);
+//        XLTaskLocalUrl localUrl = new XLTaskLocalUrl();
+//        XLDownloadManager.getInstance().getLocalUrl(savePath+"/" +(TextUtils.isEmpty(currentFileInfo.mSubPath) ? "" : currentFileInfo.mSubPath+"/")+ currentFileInfo.mFileName,localUrl);
+//        currentFileInfo.playUrl = localUrl.mStrUrl;
+//        currentFileInfo.hash = torrentInfo.mInfoHash;
+//        return currentFileInfo;
+        return getTaskId.getTaskId();
+    }
+
+
 
     /**
      * 获取某个文件的本地proxy url,如果是音视频文件可以实现变下边播

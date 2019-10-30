@@ -167,6 +167,30 @@ public final class FileUtils {
 
 
 
+    public static String downloadSpeed(long size){
+        long value = size;
+        if(value < 1024){
+            return size +"B/s";
+        }else {
+            value = new BigDecimal(value / 1024).setScale(2,BigDecimal.ROUND_DOWN).longValue();
+        }
+
+        if(value < 1024){//kb
+            return value + "KB/s";
+        }else {
+            value = new BigDecimal(value / 1024).setScale(2,BigDecimal.ROUND_DOWN).longValue();
+        }
+
+        if(value < 1024){ // MB
+            return value +"MB/s";
+        }else {
+            value = new BigDecimal(value / 1024).setScale(2,BigDecimal.ROUND_DOWN).longValue();
+            return value + "GB/s";
+        }
+    }
+
+
+
     public static boolean isVideoFile(String fileName){
         int start = fileName.lastIndexOf(".");
         String suffix = fileName.substring(start + 1);

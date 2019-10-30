@@ -23,6 +23,7 @@ import com.wangky.video.services.DownloadService;
 import com.wangky.video.util.Const;
 import com.xunlei.downloadlib.XLTaskHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +74,16 @@ public class DownloadActivity extends AppCompatActivity {
         @Override
         public void onPause(DownloadTaskEntity task) {
             downLoadModel.stopTask(task);
+        }
+
+        @Override
+        public void onPlay(DownloadTaskEntity task) {
+
+
+          String path =   downLoadModel.getLocalUrl(task.getLocalPath()+ File.separator+task.getmFileName());
+
+          System.out.println("path---------->"+path);
+
         }
     };
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
+import android.widget.Toast;
 
 import com.wangky.video.R;
 import com.wangky.video.adapter.TorrentFileListAdapter;
@@ -88,20 +89,17 @@ public class TorrentDetailActivity extends AppCompatActivity {
 
          String fileFolder = FileUtils.getFileName(path);
 
-        //选取种子文件
-        if(type.equalsIgnoreCase("torrent")){
-            TorrentInfo info = mTaskHelper.getTorrentInfo(path);
-            fileFolder = info.mMultiFileBaseFolder;
 
-            TorrentFileInfo[] fileArr = info.mSubFileInfo;
-            mList = Arrays.asList(fileArr);
-            mAdapter.addFiles(mList);
-
-        }else if(type.equalsIgnoreCase("url")) {
-
-
-
+        TorrentInfo info = mTaskHelper.getTorrentInfo(path);
+        if(info.mFileCount == 0 || null ==info.mSubFileInfo){
+            Toast.makeText(this,"获取文件信息失败",Toast.LENGTH_LONG).show();
+            return;
         }
+
+        fileFolder = info.mMultiFileBaseFolder;
+        TorrentFileInfo[] fileArr = info.mSubFileInfo;
+        mList = Arrays.asList(fileArr);
+        mAdapter.addFiles(mList);
 
 
         DownloadDir = Const.File_SAVE_PATH +File.separator+fileFolder;

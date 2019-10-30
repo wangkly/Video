@@ -18,4 +18,6 @@ public interface DownLoadModel {
     Boolean deleTask(DownloadTaskEntity task, Boolean stopTask, Boolean deleFile);
     List<TorrentInfoEntity> getTorrentInfo(DownloadTaskEntity bt);
     List<TorrentInfoEntity> getTorrentInfo(String btpath);
+
+    String getLocalUrl(String filePath);
 }

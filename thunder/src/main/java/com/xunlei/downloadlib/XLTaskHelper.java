@@ -211,6 +211,11 @@ public class XLTaskHelper {
 
 
     /**
+     *
+     * 只有先调用  XLDownloadManager.getInstance().stopTask(taskId) 后，
+     * 再次调用 addTorrentTask 才能成功，否则返回的taskId会为 -1
+     *
+     *
      * 选择子任务时取反
      * 添加种子下载任务,如果是磁力链需要先通过addMagentTask将种子下载下来
      * @param torrentPath 种子地址

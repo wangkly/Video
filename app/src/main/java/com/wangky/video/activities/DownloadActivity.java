@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.wangky.video.R;
 import com.wangky.video.adapter.DownloadListAdapter;
 import com.wangky.video.beans.DownloadTaskEntity;
+import com.wangky.video.beans.TorrentInfoEntity;
 import com.wangky.video.dao.DBTools;
 import com.wangky.video.model.DownLoadModel;
 import com.wangky.video.model.DownLoadModelImp;
@@ -24,6 +25,7 @@ import com.wangky.video.util.Const;
 import com.xunlei.downloadlib.XLTaskHelper;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,12 +79,16 @@ public class DownloadActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onPlay(DownloadTaskEntity task) {
+        public void onDetail(DownloadTaskEntity task) {
+            List<TorrentInfoEntity> subs = task.getSubTasks();
+            Intent intent = new Intent(DownloadActivity.this,SubTaskActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("subTasks", (Serializable) subs);
+            intent.putExtras(bundle);
+            startActivity(intent);
 
-
-          String path =   downLoadModel.getLocalUrl(task.getLocalPath()+ File.separator+task.getmFileName());
-
-          System.out.println("path---------->"+path);
+//          String path =   downLoadModel.getLocalUrl(task.getLocalPath()+ File.separator+task.getmFileName());
+//          System.out.println("path---------->"+path);
 
         }
     };

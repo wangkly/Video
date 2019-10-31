@@ -2,7 +2,9 @@ package com.wangky.video.beans;
 
 import android.graphics.Bitmap;
 
-public class TorrentInfoEntity {
+import java.io.Serializable;
+
+public class TorrentInfoEntity implements Serializable {
     private int mFileIndex;
     private String mFileName;
     private long mFileSize;

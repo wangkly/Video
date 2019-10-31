@@ -69,10 +69,20 @@ public class DownLoadModelImp implements DownLoadModel {
         return true;
     }
 
+
+    /**
+     * 如果二次选择同一个任务调用这个方法怎么办？
+     * 是否要判断任务是否已经存在，是否合并？
+     * @param btpath
+     * @param indexs
+     * @return
+     */
     @Override
     public Boolean startTorrentTask(String btpath, int[] indexs) {
         DownloadTaskEntity task=new DownloadTaskEntity();
         TorrentInfo torrentInfo= XLTaskHelper.instance(MyApplication.getInstance()).getTorrentInfo(btpath);
+
+        //不选默认，选择全部子任务
         if(indexs==null || indexs.length<=0) {
             int i = 0;
             indexs = new int[torrentInfo.mSubFileInfo.length];
@@ -80,6 +90,41 @@ public class DownLoadModelImp implements DownLoadModel {
                 indexs[i++] = torrent.mFileIndex;
             }
         }
+        //保存子任务信息 当前次选择的子任务信息
+        List<TorrentInfoEntity> subs= getSubTaskInfo(torrentInfo,indexs);
+
+        //判断当前是否已存在该任务，通过hash查询，不存在走正常逻辑，存在合并子任务
+        DownloadTaskEntity already = DBTools.getInstance().findByHash(torrentInfo.mInfoHash);
+        if(null != already){
+            //任务列表已存在情况
+            //先停止，再重新启动
+            XLTaskHelper.instance(MyApplication.getInstance()).stopTask(already.getTaskId());
+
+            List<TorrentInfoEntity> alreadySubs = already.getSubTasks();
+            List<TorrentInfoEntity> target = new ArrayList<>();
+
+            //alreadySubs 与subs 比对合并,去重
+            for(TorrentInfoEntity sub : subs){
+
+                boolean contain =false;
+                for(TorrentInfoEntity info : alreadySubs){
+                    if(sub.getmFileIndex() == info.getmFileIndex()){
+                        contain = true;
+                        break;
+                    }
+                }
+
+                if(!contain){
+                    target.add(sub);
+                }
+            }
+            //合并
+            alreadySubs.addAll(target);
+            already.setSubTasks(alreadySubs);
+            startTask(already);
+            return true;
+        }
+        //以下是第一次创建，任务不存在情况
         String savePath= Const.File_SAVE_PATH;
         if(torrentInfo.mIsMultiFiles) {
             savePath += File.separator + torrentInfo.mMultiFileBaseFolder;
@@ -108,6 +153,7 @@ public class DownLoadModelImp implements DownLoadModel {
             task.setmDownloadSpeed(taskInfo.mDownloadSpeed);
             task.setTaskType(Const.BT_DOWNLOAD);
             task.setCreateDate(new Date());
+            task.setSubTasks(subs);
             DBTools.getInstance().saveBindingId(task);
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,17 +162,61 @@ public class DownLoadModelImp implements DownLoadModel {
         return true;
     }
 
+
+    /**
+     * 获取选中的子任务，进行保存
+     * @param torrentInfo
+     * @param indexs 选中的子任务
+     * @return 子任务信息
+     */
+    public List<TorrentInfoEntity> getSubTaskInfo(TorrentInfo torrentInfo,int[] indexs){
+        List<TorrentInfoEntity> subs = new ArrayList<>();
+
+        for(int i = 0 ; i < indexs.length; i++){
+            int j = indexs[i]; //indexs 里存的是 torrentInfo.mSubFileInfo 里对应的下标
+            TorrentFileInfo torrent = torrentInfo.mSubFileInfo[j];
+
+            TorrentInfoEntity tie=new TorrentInfoEntity();
+            tie.setHash(torrent.hash);
+            tie.setmFileIndex(torrent.mFileIndex);
+            tie.setmFileName(torrent.mFileName);
+            tie.setmFileSize(torrent.mFileSize);
+            tie.setmSubPath(torrent.mSubPath);
+            tie.setmRealIndex(torrent.mRealIndex);
+            tie.setPath(Const.File_SAVE_PATH+
+                    File.separator+torrentInfo.mMultiFileBaseFolder+
+                    File.separator+torrent.mSubPath+File.separator+torrent.mFileName);
+
+            subs.add(tie);
+        }
+
+        return subs;
+    }
+
+    /**
+     * 暂停的下载任务再次启动后taskId 会改变，不一定为原来的值
+     * @param task
+     * @return
+     */
     @Override
     public Boolean startTask(DownloadTaskEntity task) {
         try {
             long taskId=0;
             if(task.getTaskType()==Const.BT_DOWNLOAD){
-                TorrentInfo torrentInfo= XLTaskHelper.instance(MyApplication.getInstance()).getTorrentInfo(task.getUrl());
+//                TorrentInfo torrentInfo= XLTaskHelper.instance(MyApplication.getInstance()).getTorrentInfo(task.getUrl());
+                //取任务中已存在的子任务
+                List<TorrentInfoEntity> subs = task.getSubTasks();
+                int[] indexs = new int[subs.size()];
                 int i=0;
-                int[] indexs=new int[torrentInfo.mSubFileInfo.length];
-                for(TorrentFileInfo torrent:torrentInfo.mSubFileInfo) {
-                    indexs[i++]=torrent.mFileIndex;
+//                indexs=new int[torrentInfo.mSubFileInfo.length];
+//                for(TorrentFileInfo torrent:torrentInfo.mSubFileInfo) {
+//                    indexs[i++]=torrent.mFileIndex;
+//                }
+
+                for(TorrentInfoEntity info : subs){
+                    indexs[i++]=info.getmFileIndex();
                 }
+
                 taskId = XLTaskHelper.instance(MyApplication.getInstance()).addTorrentTask(task.getUrl(), task.getLocalPath(),indexs);
             }else if(task.getTaskType()==Const.URL_DOWNLOAD){
                 taskId = XLTaskHelper.instance(MyApplication.getInstance()).addThunderTask(task.getUrl(), task.getLocalPath(), null);
@@ -152,7 +242,7 @@ public class DownLoadModelImp implements DownLoadModel {
             task.setmTaskStatus(Const.DOWNLOAD_STOP);
             task.setmDownloadSpeed(0);
             task.setmDCDNSpeed(0);
-            DBTools.getInstance().saveOrUpdate(task);
+            DBTools.getInstance().updateMainTask(task);
         } catch (Exception e) {
             e.printStackTrace();
             return false;

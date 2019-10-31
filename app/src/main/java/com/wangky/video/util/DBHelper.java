@@ -24,6 +24,10 @@ public class DBHelper extends SQLiteOpenHelper {
             "mDCDNSpeed integer, hash text, isFile integer, createDate integer, thumbnailPath text)";
 
 
+    public static final String CREATE_SUBTASKS ="create table subtask(id integer primary key autoincrement, pid integer," +
+                    "mFileIndex integer,mFileName text,mFileSize integer,path text,mSubPath text,playUrl text,hash text)";
+
+
 
     private DBHelper(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -42,11 +46,13 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_DOWNLOAD);
+        db.execSQL(CREATE_SUBTASKS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists download");
+        db.execSQL("drop table if exists subtask");
     }
 
 

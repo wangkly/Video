@@ -58,12 +58,13 @@ public class UpdateUI {
                         task.setmDownloadSize(taskInfo.mDownloadSize);
                     }
 
-                    DBTools.getInstance().saveOrUpdate(task);
+//                    DBTools.getInstance().saveOrUpdate(task);
+                    //已下载成功了
                     if (DownUtil.isDownSuccess(task)) {
                         downLoadModel.stopTask(task);
                         task.setmTaskStatus(Const.DOWNLOAD_SUCCESS);
-                        DBTools.getInstance().saveOrUpdate(task);
                     }
+                    DBTools.getInstance().updateMainTask(task);
                 }
 
             }

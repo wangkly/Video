@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class DownloadTaskEntity implements Serializable {
     private int id;
@@ -22,6 +23,17 @@ public class DownloadTaskEntity implements Serializable {
     private Date createDate;
     private String thumbnailPath;
     private Bitmap thumbnail;
+    //子任务
+    private List<TorrentInfoEntity> subTasks;
+
+    public List<TorrentInfoEntity> getSubTasks() {
+        return subTasks;
+    }
+
+    public void setSubTasks(List<TorrentInfoEntity> subTasks) {
+        this.subTasks = subTasks;
+    }
+
 
     public int getId() {
         return id;

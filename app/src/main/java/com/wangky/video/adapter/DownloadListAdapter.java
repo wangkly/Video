@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.wangky.video.R;
 import com.wangky.video.beans.DownloadTaskEntity;
+import com.wangky.video.util.Const;
 import com.wangky.video.util.FileUtils;
 
 import java.math.BigDecimal;
@@ -56,10 +57,31 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         holder.speed.setText(FileUtils.downloadSpeed(entity.getmDownloadSpeed()));
 
         BigDecimal percent = new BigDecimal(entity.getmDownloadSize())
-                .divide(new BigDecimal(entity.getmFileSize() != 0 ? entity.getmFileSize() : 1L),2, RoundingMode.HALF_UP)
+                .divide(new BigDecimal(entity.getmFileSize() != 0 ? entity.getmFileSize() : entity.getmDownloadSize()),2, RoundingMode.HALF_UP)
+                .multiply(new BigDecimal(100))
                 .setScale(2,BigDecimal.ROUND_DOWN);
-        holder.percent.setText(String.valueOf(percent)+"%");
+
+
+        holder.percent.setText(percent +"%");
         holder.progressBar.setProgress(percent.intValue());
+
+        if(entity.getmTaskStatus() == Const.DOWNLOAD_STOP
+                || entity.getmTaskStatus() == Const.DOWNLOAD_FAIL
+                || entity.getmTaskStatus() == Const.DOWNLOAD_WAIT){
+            //下载暂停，失败，等待
+            holder.pause.setVisibility(View.GONE);
+            holder.start.setVisibility(View.VISIBLE);
+        }else if(entity.getmTaskStatus() == Const.DOWNLOAD_CONNECTION
+                || entity.getmTaskStatus() == Const.DOWNLOAD_LOADING  ){
+            //下载中，连接中
+            holder.start.setVisibility(View.GONE);
+            holder.pause.setVisibility(View.VISIBLE);
+        }else {
+            //已成功 ，都不显示
+            holder.start.setVisibility(View.GONE);
+            holder.pause.setVisibility(View.GONE);
+        }
+
 
     }
 
@@ -82,8 +104,6 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
 
         private ImageButton start;
         private ImageButton pause;
-        private ImageButton delete;
-        private ImageButton play;
 
         private ProgressBar progressBar;
 
@@ -97,15 +117,20 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
 
             start = itemView.findViewById(R.id.down_start);
             pause = itemView.findViewById(R.id.pause);
-            delete = itemView.findViewById(R.id.delete);
-            play = itemView.findViewById(R.id.play);
 
             progressBar = itemView.findViewById(R.id.down_progress);
 
             start.setOnClickListener(this);
             pause.setOnClickListener(this);
-            delete.setOnClickListener(this);
-            play.setOnClickListener(this);
+
+            itemView.setOnLongClickListener(v -> {
+                int position = getAdapterPosition();
+                DownloadTaskEntity entity = mTasks.get(position);
+                mBtnClick.onDelete(entity);
+                return true;
+            });
+
+            itemView.setOnClickListener(this);
         }
 
 
@@ -114,9 +139,6 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
             int position = getAdapterPosition();
             DownloadTaskEntity entity = mTasks.get(position);
             switch (v.getId()){
-                case R.id.delete:
-                    mBtnClick.onDelete(entity);
-                    break;
                 case R.id.down_start:
                     mBtnClick.onStart(entity);
                     start.setVisibility(View.GONE);
@@ -127,10 +149,9 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
                     start.setVisibility(View.VISIBLE);
                     pause.setVisibility(View.GONE);
                     break;
-                case R.id.play:
-                    mBtnClick.onPlay(entity);
-                    break;
+
                 default:
+                    mBtnClick.onDetail(entity);
                     break;
 
             }
@@ -148,7 +169,8 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
 
         void onPause(DownloadTaskEntity task);
 
-        void onPlay(DownloadTaskEntity task);
+        void onDetail(DownloadTaskEntity task);
+
     }
 
 

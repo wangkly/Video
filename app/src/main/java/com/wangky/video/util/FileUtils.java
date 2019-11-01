@@ -144,25 +144,21 @@ public final class FileUtils {
      * @return
      */
     public static String getFileSize(long size){
-        long value = size;
-        if(value < 1024){
-            return size +"B";
-        }else {
-            value = new BigDecimal(value / 1024).setScale(2,BigDecimal.ROUND_DOWN).longValue();
-        }
+        long kb = 1024;
+        long mb = kb * 1024;
+        long gb = mb * 1024;
 
-        if(value < 1024){//kb
-            return value + "KB";
-        }else {
-            value = new BigDecimal(value / 1024).setScale(2,BigDecimal.ROUND_DOWN).longValue();
-        }
+        if (size >= gb) {
+            return String.format("%.1f GB", (float) size / gb);
+        } else if (size >= mb) {
+            float f = (float) size / mb;
+            return String.format(f > 100 ? "%.0f M" : "%.1f M", f);
+        } else if (size >= kb) {
+            float f = (float) size / kb;
+            return String.format(f > 100 ? "%.0f K" : "%.1f K", f);
+        } else
+            return String.format("%d B", size);
 
-        if(value < 1024){ // MB
-            return value +"MB";
-        }else {
-            value = new BigDecimal(value / 1024).setScale(2,BigDecimal.ROUND_DOWN).longValue();
-            return value + "GB";
-        }
     }
 
 

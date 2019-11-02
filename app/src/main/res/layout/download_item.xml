@@ -29,7 +29,7 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:layout_height="match_parent">
 
             <LinearLayout
@@ -84,7 +84,7 @@
 
             <TextView
                 android:id="@+id/percent"
-                android:layout_width="40dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="@string/percent"/>
 
@@ -93,6 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_download_1"
+                android:layout_gravity="end|center"
                 android:layout_marginLeft="10dp"
                 android:visibility="gone"
                 android:background="#00000000"/>
@@ -101,6 +102,8 @@
                 android:id="@+id/pause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_gravity="end|center"
                 android:src="@drawable/ic_pause"
                 android:background="#00000000"/>
 

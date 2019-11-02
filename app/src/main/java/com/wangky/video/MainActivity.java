@@ -12,8 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.wangky.video.activities.DownloadActivity;
 import com.wangky.video.activities.MagnetActivity;
 import com.wangky.video.activities.PlayActivity;
@@ -27,7 +25,6 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -190,14 +187,17 @@ public class MainActivity extends AppCompatActivity {
                 case OPEN_FILE_MANAGER:
                     Uri uri = data.getData();
                     String path = FileUtils.getFilePathByUri(MainActivity.this, uri);
+                    String suffix = path.substring(path.lastIndexOf(".") + 1).toUpperCase();
+                    if(!"TORRENT".equals(suffix)) {
+                        Toast.makeText(MainActivity.this,"请选择种子文件",Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
                     Intent intent = new Intent(MainActivity.this,TorrentDetailActivity.class);
                     intent.putExtra("type","torrent");
                     intent.putExtra("path",path);
 
                     startActivity(intent);
-//                    DownloadTask task = new DownloadTask(MainActivity.this);
-//                    task.execute(path);
 
                     break;
 

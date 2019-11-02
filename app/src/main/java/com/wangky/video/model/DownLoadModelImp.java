@@ -185,7 +185,7 @@ public class DownLoadModelImp implements DownLoadModel {
             tie.setmRealIndex(torrent.mRealIndex);
             tie.setPath(Const.File_SAVE_PATH+
                     File.separator+torrentInfo.mMultiFileBaseFolder+
-                    File.separator+torrent.mSubPath+File.separator+torrent.mFileName);
+                    File.separator+torrent.mFileName);
 
             subs.add(tie);
         }

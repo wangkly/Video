@@ -152,10 +152,10 @@ public final class FileUtils {
             return String.format("%.1f GB", (float) size / gb);
         } else if (size >= mb) {
             float f = (float) size / mb;
-            return String.format(f > 100 ? "%.0f M" : "%.1f M", f);
+            return String.format(f > 100 ? "%.0f MB" : "%.1f MB", f);
         } else if (size >= kb) {
             float f = (float) size / kb;
-            return String.format(f > 100 ? "%.0f K" : "%.1f K", f);
+            return String.format(f > 100 ? "%.0f KB" : "%.1f KB", f);
         } else
             return String.format("%d B", size);
 
@@ -164,25 +164,20 @@ public final class FileUtils {
 
 
     public static String downloadSpeed(long size){
-        long value = size;
-        if(value < 1024){
-            return size +"B/s";
-        }else {
-            value = new BigDecimal(value / 1024).setScale(2,BigDecimal.ROUND_DOWN).longValue();
-        }
+        long kb = 1024;
+        long mb = kb * 1024;
+        long gb = mb * 1024;
 
-        if(value < 1024){//kb
-            return value + "KB/s";
-        }else {
-            value = new BigDecimal(value / 1024).setScale(2,BigDecimal.ROUND_DOWN).longValue();
-        }
-
-        if(value < 1024){ // MB
-            return value +"MB/s";
-        }else {
-            value = new BigDecimal(value / 1024).setScale(2,BigDecimal.ROUND_DOWN).longValue();
-            return value + "GB/s";
-        }
+        if (size >= gb) {
+            return String.format("%.1f GB/s", (float) size / gb);
+        } else if (size >= mb) {
+            float f = (float) size / mb;
+            return String.format(f > 100 ? "%.0f MB/s" : "%.1f MB/s", f);
+        } else if (size >= kb) {
+            float f = (float) size / kb;
+            return String.format(f > 100 ? "%.0f KB" : "%.1f KB/s", f);
+        } else
+            return String.format("%d B/s", size);
     }
 
 

@@ -1,23 +1,20 @@
 package com.wangky.video.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.wangky.video.MainActivity;
 import com.wangky.video.R;
-import com.wangky.video.adapter.TorrentFileListAdapter;
 import com.wangky.video.adapter.TorrentTaskListAdapter;
 import com.wangky.video.beans.TorrentInfoEntity;
 import com.xunlei.downloadlib.XLTaskHelper;
-import com.xunlei.downloadlib.parameter.TorrentFileInfo;
 
 import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class SubTaskActivity extends AppCompatActivity {
 

@@ -34,7 +34,7 @@ public class TorrentTaskListAdapter extends RecyclerView.Adapter<TorrentTaskList
     @Override
     public FileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-       View item = LayoutInflater.from(mContext).inflate(R.layout.file_item,parent,false);
+       View item = LayoutInflater.from(mContext).inflate(R.layout.sub_task_item,parent,false);
 
         FileViewHolder fileViewHolder = new FileViewHolder(item);
 

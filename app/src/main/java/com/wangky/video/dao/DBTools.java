@@ -56,17 +56,17 @@ public class DBTools {
       //保存下子任务信息
        List<TorrentInfoEntity> subTasks = entity.getSubTasks();
        for (TorrentInfoEntity sub :subTasks){
-           values.clear();
-           values.put("pid",count);
-           values.put("mFileIndex",sub.getmFileIndex());
-           values.put("mFileName",sub.getmFileName());
-           values.put("mFileSize",sub.getmFileSize());
-           values.put("path",sub.getPath());
-           values.put("mSubPath",sub.getmSubPath());
-           values.put("playUrl",sub.getPlayUrl());
-           values.put("hash",sub.getHash());
+           ContentValues subValues = new ContentValues();
+           subValues.put("pid",count);
+           subValues.put("mFileIndex",sub.getmFileIndex());
+           subValues.put("mFileName",sub.getmFileName());
+           subValues.put("mFileSize",sub.getmFileSize());
+           subValues.put("path",sub.getPath());
+           subValues.put("mSubPath",sub.getmSubPath());
+           subValues.put("playUrl",sub.getPlayUrl());
+           subValues.put("hash",sub.getHash());
 
-           db.insert("subtask",null,values);
+           db.insert("subtask",null,subValues);
        }
 
       if(count != -1){
@@ -95,30 +95,32 @@ public class DBTools {
         values.put("isFile",entity.getFile() ? 1:0);
         values.put("createDate",entity.getCreateDate().getTime());
         values.put("thumbnailPath",entity.getThumbnailPath());
-        db.beginTransaction();
+
 
         long count= db.update("download",values,"id = ?",new String[]{String.valueOf(id)});
 
         //更新子任务信息
         //先删除之前的再插入新的
-        db.delete("subtask","pid = ?",new String[]{String.valueOf(id)});
+       int deleteCount = db.delete("subtask","pid = ?",new String[]{String.valueOf(id)});
+        System.out.println(deleteCount);
 
         List<TorrentInfoEntity> subTasks = entity.getSubTasks();
         for (TorrentInfoEntity sub :subTasks){
-            values.clear();
-            values.put("pid",count);
-            values.put("mFileIndex",sub.getmFileIndex());
-            values.put("mFileName",sub.getmFileName());
-            values.put("mFileSize",sub.getmFileSize());
-            values.put("path",sub.getPath());
-            values.put("mSubPath",sub.getmSubPath());
-            values.put("playUrl",sub.getPlayUrl());
-            values.put("hash",sub.getHash());
+           ContentValues subValues = new ContentValues();
+            subValues.put("pid",count);
+            subValues.put("mFileIndex",sub.getmFileIndex());
+            subValues.put("mFileName",sub.getmFileName());
+            subValues.put("mFileSize",sub.getmFileSize());
+            subValues.put("path",sub.getPath());
+            subValues.put("mSubPath",sub.getmSubPath());
+            subValues.put("playUrl",sub.getPlayUrl());
+            subValues.put("hash",sub.getHash());
 
-            db.insert("subtask",null,values);
+          long insertCount = db.insert("subtask",null,subValues);
+            System.out.println(insertCount);
         }
 
-        db.endTransaction();
+
         if(count != -1){
             result =true;
         }
@@ -226,6 +228,8 @@ public class DBTools {
           }while (cursor.moveToNext());
       }
 
+      cursor.close();
+
       return tasks;
 
    }
@@ -279,6 +283,7 @@ public class DBTools {
 
          }
 
+         cursor.close();
          entity.setSubTasks(subTasks);
 
 

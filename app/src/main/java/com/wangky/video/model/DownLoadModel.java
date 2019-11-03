@@ -7,11 +7,11 @@ import java.util.List;
 
 
 public interface DownLoadModel {
-    Boolean startTorrentTask(DownloadTaskEntity bt);
-    Boolean startTorrentTask(String btpath);
-    Boolean startTorrentTask(DownloadTaskEntity bt, int[] indexs);
+    DownloadTaskEntity startTorrentTask(DownloadTaskEntity bt);
+    DownloadTaskEntity startTorrentTask(String btpath);
+    DownloadTaskEntity startTorrentTask(DownloadTaskEntity bt, int[] indexs);
     Boolean startUrlTask(String url);
-    Boolean startTorrentTask(String btpath, int[] indexs);
+    DownloadTaskEntity startTorrentTask(String btpath, int[] indexs);
     Boolean startTask(DownloadTaskEntity task);
     Boolean stopTask(DownloadTaskEntity task);
     Boolean deleTask(DownloadTaskEntity task, Boolean deleFile);

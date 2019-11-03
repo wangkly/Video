@@ -107,7 +107,7 @@ public class DBTools {
         List<TorrentInfoEntity> subTasks = entity.getSubTasks();
         for (TorrentInfoEntity sub :subTasks){
            ContentValues subValues = new ContentValues();
-            subValues.put("pid",count);
+            subValues.put("pid",id);
             subValues.put("mFileIndex",sub.getmFileIndex());
             subValues.put("mFileName",sub.getmFileName());
             subValues.put("mFileSize",sub.getmFileSize());

@@ -23,7 +23,7 @@ public class DownLoadModelImp implements DownLoadModel {
 
     }
     @Override
-    public Boolean startTorrentTask(DownloadTaskEntity bt) {
+    public DownloadTaskEntity startTorrentTask(DownloadTaskEntity bt) {
         String path=bt.getUrl();
         try {
             DBTools.getInstance().delete(bt);
@@ -34,11 +34,11 @@ public class DownLoadModelImp implements DownLoadModel {
     }
 
     @Override
-    public Boolean startTorrentTask(String btpath) {
+    public DownloadTaskEntity startTorrentTask(String btpath) {
         return startTorrentTask(btpath,null);
     }
     @Override
-    public Boolean startTorrentTask(DownloadTaskEntity bt, int[] indexs) {
+    public DownloadTaskEntity startTorrentTask(DownloadTaskEntity bt, int[] indexs) {
         String path=bt.getLocalPath()+ File.separator+bt.getmFileName();
         return startTorrentTask(path,indexs);
     }
@@ -78,7 +78,7 @@ public class DownLoadModelImp implements DownLoadModel {
      * @return
      */
     @Override
-    public Boolean startTorrentTask(String btpath, int[] indexs) {
+    public DownloadTaskEntity startTorrentTask(String btpath, int[] indexs) {
         DownloadTaskEntity task=new DownloadTaskEntity();
         TorrentInfo torrentInfo= XLTaskHelper.instance(MyApplication.getInstance()).getTorrentInfo(btpath);
 
@@ -122,7 +122,7 @@ public class DownLoadModelImp implements DownLoadModel {
             alreadySubs.addAll(target);
             already.setSubTasks(alreadySubs);
             startTask(already);
-            return true;
+            return already;
         }
         //以下是第一次创建，任务不存在情况
         String savePath= Const.File_SAVE_PATH;
@@ -157,9 +157,9 @@ public class DownLoadModelImp implements DownLoadModel {
             DBTools.getInstance().saveBindingId(task);
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
-        return true;
+        return task;
     }
 
 

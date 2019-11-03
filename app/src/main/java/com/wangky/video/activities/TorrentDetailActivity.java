@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import com.wangky.video.R;
 import com.wangky.video.adapter.TorrentFileListAdapter;
+import com.wangky.video.beans.DownloadTaskEntity;
+import com.wangky.video.beans.TorrentInfoEntity;
 import com.wangky.video.model.DownLoadModel;
 import com.wangky.video.model.DownLoadModelImp;
 import com.wangky.video.util.Const;
@@ -39,7 +41,7 @@ public class TorrentDetailActivity extends AppCompatActivity {
 
     private List<TorrentFileInfo> mList;
 
-    private String type;
+//    private String type;
 
     private String path;//种子文件所在地址
 
@@ -51,17 +53,31 @@ public class TorrentDetailActivity extends AppCompatActivity {
           RecyclerView.ViewHolder holder = (RecyclerView.ViewHolder) v.getTag();
           int position = holder.getAdapterPosition();
             TorrentFileInfo file = mList.get(position);
-            long taskId = 0;
-//            try {
-//                taskId = mTaskHelper.addTorrentTask(path,DownloadDir,new int[]{file.mFileIndex});
-////                    String mPlayUrl = mTaskHelper.getLocalUrl(DownloadDir+File.separator+file.mFileName);
-//                XLTaskInfo task = mTaskHelper.getTaskInfo(taskId);
-//                System.out.println(task.mDownloadSpeed);
-//
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-            downLoadModel.startTorrentTask(path,new int[]{file.mFileIndex});
+
+            DownloadTaskEntity task = downLoadModel.startTorrentTask(path,new int[]{file.mFileIndex});
+            if(null != task && null !=task.getSubTasks()){
+                List<TorrentInfoEntity> subs = task.getSubTasks();
+                //找出当前对应的子任务
+                TorrentInfoEntity target = null;
+                for (TorrentInfoEntity entity:subs){
+                    if(entity.getmFileIndex() == file.mFileIndex){
+                        target = entity;
+                        break;
+                    }
+                }
+
+                if(null != target){
+                    String path = target.getPath();
+                    String localUrl = mTaskHelper.getLocalUrl(path);
+                    Intent intent = new Intent(TorrentDetailActivity.this, PlayActivity.class);
+                    intent.putExtra("LOrientation",true);
+                    intent.putExtra("data",localUrl);
+                    intent.putExtra("title",target.getmFileName());
+                    startActivity(intent);
+                }else {
+                    Toast.makeText(TorrentDetailActivity.this,"创建任务成功，请前往下载列表查看",Toast.LENGTH_LONG).show();
+                }
+            }
 
         }
     };
@@ -84,7 +100,7 @@ public class TorrentDetailActivity extends AppCompatActivity {
 
         mTaskHelper= XLTaskHelper.instance(this);
         Intent intent = getIntent();
-         type = intent.getStringExtra("type");
+//         type = intent.getStringExtra("type");
          path = intent.getStringExtra("path");
 
          String fileFolder = FileUtils.getFileName(path);

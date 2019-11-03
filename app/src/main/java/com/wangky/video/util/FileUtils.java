@@ -175,7 +175,7 @@ public final class FileUtils {
             return String.format(f > 100 ? "%.0f MB/s" : "%.1f MB/s", f);
         } else if (size >= kb) {
             float f = (float) size / kb;
-            return String.format(f > 100 ? "%.0f KB" : "%.1f KB/s", f);
+            return String.format(f > 100 ? "%.0f KB/s" : "%.1f KB/s", f);
         } else
             return String.format("%d B/s", size);
     }

@@ -57,7 +57,7 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         holder.speed.setText(FileUtils.downloadSpeed(entity.getmDownloadSpeed()));
 
         BigDecimal percent = new BigDecimal(entity.getmDownloadSize())
-                .divide(new BigDecimal(entity.getmFileSize() != 0 ? entity.getmFileSize() : entity.getmDownloadSize()),2, RoundingMode.HALF_UP)
+                .divide(new BigDecimal(entity.getmFileSize() != 0 ? entity.getmFileSize() : 1),2, RoundingMode.HALF_UP)
                 .multiply(new BigDecimal(100))
                 .setScale(2,BigDecimal.ROUND_DOWN);
 

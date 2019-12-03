@@ -140,6 +140,15 @@
     </LinearLayout>
 
 
+    <ProgressBar
+        android:id="@+id/loading"
+        android:visibility="gone"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
+
 
     <LinearLayout
         android:id="@+id/bottomBar"

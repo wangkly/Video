@@ -13,6 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +67,8 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
 
     private TextView progress_percent;
 
+    private ProgressBar mLoading;
+
     private PlayerEventListener eventListener;
 
     @Override
@@ -90,7 +93,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         mBack = findViewById(R.id.m_back);
         mTitle = findViewById(R.id.m_title);
         mToggle = findViewById(R.id.exo_toggle);
-
+        mLoading = findViewById(R.id.loading);
 
         Intent intent = getIntent();
         String data = intent.getStringExtra("data");
@@ -190,6 +193,12 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
 
 
     class PlayerEventListener implements Player.EventListener{
+
+        @Override
+        public void onLoadingChanged(boolean isLoading) {
+            Log.i(TAG,"onLoadingChanged===> " +isLoading);
+        }
+
         /**
          * @param playWhenReady
          * @param playbackState
@@ -204,13 +213,13 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             if(playWhenReady && playbackState == Player.STATE_READY){
-//                Toast.makeText(PlayActivity.this,"开始播放",Toast.LENGTH_SHORT).show();
+                    mLoading.setVisibility(View.GONE);
             }else if (playWhenReady) {
                 // Not playing because playback ended, the player is buffering, stopped or
                 // failed. Check playbackState and player.getPlaybackError for details.
                 if(playbackState == Player.STATE_BUFFERING){
                     if(progressChange == -1){
-                        Toast.makeText(PlayActivity.this,"缓冲中",Toast.LENGTH_SHORT).show();
+                       mLoading.setVisibility(View.VISIBLE);
                     }
                 }else if(playbackState == Player.STATE_ENDED){
 //                    Toast.makeText(PlayActivity.this,"播放结束",Toast.LENGTH_SHORT).show();
@@ -234,12 +243,13 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
 
     @Override
     public void onVideoVolumeChange(float percent) {
-        if(currentVolume == -1){
+        if(currentVolume < 0){
+            volume_view.setVisibility(View.VISIBLE);
+            Log.e(TAG,"=====***volume_view.setVisibility===***** Visible");
             currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             if(currentVolume < 0 ){
                 currentVolume = 0;
             }
-            volume_view.setVisibility(View.VISIBLE);
         }
         int volume = (int) (percent * maxVolume + currentVolume);
         if(volume > maxVolume){
@@ -262,6 +272,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
             if(mBrightness < 0.01f){
                 mBrightness = 0.01f;
             }
+            Log.e(TAG,"=====***brightness.setVisibility===***** Visible");
             brightness.setVisibility(View.VISIBLE);
         }
         WindowManager.LayoutParams lpa = getWindow().getAttributes();
@@ -276,6 +287,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
 
     @Override
     public void onVideoProgressChange(int type ,long progress) {
+        Log.e(TAG,"onVideoProgressChange===> "+ type);
         if(progressChange ==-1){
             progress_tip.setVisibility(View.VISIBLE);
             progressChange = 1;

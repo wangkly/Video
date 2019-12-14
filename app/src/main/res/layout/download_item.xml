@@ -5,129 +5,129 @@
     android:padding="10dp">
 
     <LinearLayout
-        android:id="@+id/name_line"
-        android:layout_width="match_parent"
-        android:layout_height="40dp">
-        <TextView
-            android:id="@+id/file_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="@string/file_name"
-            android:maxLines="2"
-            android:ellipsize="end"
-            />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/info_line"
+        android:id="@+id/topLine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/name_line"
         android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="3"
-            android:layout_height="match_parent">
+            android:layout_weight="5"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
+            <!--任务名称-->
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-
+                android:id="@+id/name_line"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
                 <TextView
-                    android:id="@+id/totalSize"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/file_name"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/total_size" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="/" />
-
-                <TextView
-                    android:id="@+id/downloadSize"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/download_size" />
-
+                    android:textSize="14sp"
+                    android:text="@string/file_name"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    />
             </LinearLayout>
 
+            <!--下载任务信息-->
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp">
+                android:id="@+id/info_line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <TextView
+                <!--文件大小-->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/totalSize"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/total_size" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="/" />
+
+                    <TextView
+                        android:id="@+id/downloadSize"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/download_size" />
+                </LinearLayout>
+
+                <!--下载速度-->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/download_speed" />
+                    android:layout_marginLeft="20dp">
 
-                <TextView
-                    android:id="@+id/speed"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/download_speed" />
+
+                    <TextView
+                        android:id="@+id/speed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/download_speed" />
+
+                </LinearLayout>
+
+                <!--下载百分比-->
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/download_speed" />
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/percent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/percent"/>
+                </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
 
+
+        <!--暂停、开始-->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/percent"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/percent"/>
+                <ImageButton
+                    android:id="@+id/down_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_download_1"
+                    android:layout_gravity="end|center"
+                    android:layout_marginLeft="10dp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    android:background="#00000000"/>
 
-            <ImageButton
-                android:id="@+id/down_start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_download_1"
-                android:layout_gravity="end|center"
-                android:layout_marginLeft="10dp"
-                android:visibility="gone"
-                android:background="#00000000"/>
-
-            <ImageButton
-                android:id="@+id/pause"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="end|center"
-                android:src="@drawable/ic_pause"
-                android:background="#00000000"/>
-
-            <!--<ImageButton-->
-                <!--android:id="@+id/delete"-->
-                <!--android:layout_marginLeft="10dp"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:src="@drawable/ic_delete"-->
-                <!--android:background="#00000000"/>-->
-
-            <!--<ImageButton-->
-                <!--android:id="@+id/play"-->
-                <!--android:layout_marginLeft="10dp"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:src="@drawable/ic_play"-->
-                <!--android:background="#00000000"/>-->
-
-
+                <ImageButton
+                    android:id="@+id/pause"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="end|center"
+                    android:src="@drawable/ic_pause"
+                    android:scaleType="fitCenter"
+                    android:background="#00000000"/>
         </LinearLayout>
 
-
     </LinearLayout>
+
+
 
 
     <LinearLayout
@@ -135,7 +135,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:layout_below="@id/info_line">
+        android:layout_below="@id/topLine">
 
         <ProgressBar
             android:id="@+id/down_progress"

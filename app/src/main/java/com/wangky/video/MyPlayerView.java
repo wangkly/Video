@@ -21,7 +21,7 @@ public class MyPlayerView extends PlayerView {
 
     private int windowHeight;
 
-    private float STEP_PROGRESS = 20;
+    private float STEP_PROGRESS = 10;
     private Boolean firstScroll =false;
 
     private  int GESTURE_FLAG = 1;
@@ -49,6 +49,7 @@ public class MyPlayerView extends PlayerView {
             float oldX = e1.getX();
             float oldY = e1.getY();
             float y =  e2.getRawY();
+            float x = e2.getRawX();
             if(firstScroll){// 以触摸屏幕后第一次滑动为标准，避免在屏幕上操作切换混乱
                 // 横向的距离变化大则调整进度，纵向的变化大则调整音量、亮度
                 if(Math.abs(distanceX) >= Math.abs(distanceY)){
@@ -67,9 +68,11 @@ public class MyPlayerView extends PlayerView {
             if(GESTURE_FLAG == GESTURE_MODIFY_PROGRESS){
                 if(Math.abs(distanceX) > Math.abs(distanceY)){
                     if(distanceX >= DensityUtil.dip2px(getContext(),STEP_PROGRESS) ){ //快退
-                        mOptListener.onVideoProgressChange(PROGRESS_BACKWARD,PROGRESS_STEP);
+                        float percent = Math.abs((oldX - x) / windowWidth);
+                        mOptListener.onVideoProgressChange(PROGRESS_BACKWARD,percent);
                     }else if(distanceX <= - DensityUtil.dip2px(getContext(),STEP_PROGRESS)){//快进
-                        mOptListener.onVideoProgressChange(PROGRESS_FORWARD,PROGRESS_STEP);
+                        float percent = Math.abs((oldX - x) / windowWidth);
+                        mOptListener.onVideoProgressChange(PROGRESS_FORWARD,percent);
                     }
                 }
             }else if(GESTURE_FLAG == GESTURE_MODIFY_VOLUME){
@@ -140,7 +143,7 @@ public class MyPlayerView extends PlayerView {
         if(mGestureDetector.onTouchEvent(event)) return true;
 
         // 处理手势结束
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+        switch (event.getAction()) {
             case MotionEvent.ACTION_UP:
 
                 mOptListener.onOperationEnd();
@@ -163,7 +166,7 @@ public class MyPlayerView extends PlayerView {
 
         void onViewBrightnessChange(float percent);
 
-        void onVideoProgressChange(int type ,long progress);
+        void onVideoProgressChange(int type ,float percent);
 
         void onOperationEnd();
 

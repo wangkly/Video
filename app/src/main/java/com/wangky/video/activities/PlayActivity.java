@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -52,6 +53,8 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
     private int maxVolume = 0;
     private int currentVolume = -1;
     private int progressChange = -1;
+
+    private long duration = 0;//视频时长
 
     private LinearLayout brightness;
 
@@ -166,10 +169,13 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         currentVolume = -1;
         mBrightness = -1f;
         progressChange = -1;
-        // 隐藏
-        brightness.setVisibility(View.GONE);
-        volume_view.setVisibility(View.GONE);
-        progress_tip.setVisibility(View.GONE);
+
+        new Handler().postDelayed(() -> {
+            // 隐藏
+            brightness.setVisibility(View.GONE);
+            volume_view.setVisibility(View.GONE);
+            progress_tip.setVisibility(View.GONE);
+        },1000);
     }
 
 
@@ -212,6 +218,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
          */
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            Log.e(TAG,"onPlayerStateChanged===> "+ playbackState);
             if(playWhenReady && playbackState == Player.STATE_READY){
                     mLoading.setVisibility(View.GONE);
             }else if (playWhenReady) {
@@ -245,7 +252,6 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
     public void onVideoVolumeChange(float percent) {
         if(currentVolume < 0){
             volume_view.setVisibility(View.VISIBLE);
-            Log.e(TAG,"=====***volume_view.setVisibility===***** Visible");
             currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             if(currentVolume < 0 ){
                 currentVolume = 0;
@@ -272,7 +278,6 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
             if(mBrightness < 0.01f){
                 mBrightness = 0.01f;
             }
-            Log.e(TAG,"=====***brightness.setVisibility===***** Visible");
             brightness.setVisibility(View.VISIBLE);
         }
         WindowManager.LayoutParams lpa = getWindow().getAttributes();
@@ -286,13 +291,19 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
     }
 
     @Override
-    public void onVideoProgressChange(int type ,long progress) {
-        Log.e(TAG,"onVideoProgressChange===> "+ type);
-        if(progressChange ==-1){
+    public void onVideoProgressChange(int type ,float percent) {
+        percent = percent / 10;//再缩小10倍
+//        Log.e(TAG,"onVideoProgressChange===> "+ type);
+        if(progressChange == -1){
             progress_tip.setVisibility(View.VISIBLE);
             progressChange = 1;
         }
-       long duration =  player.getDuration();
+        if(duration == 0){
+            duration =  player.getDuration();
+        }
+
+        long progress = (long) (duration * percent);
+
         if(type == MyPlayerView.PROGRESS_FORWARD){
            long current =  player.getCurrentPosition();
            current += progress;
@@ -326,6 +337,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
         String hms = formatter.format(current);
         String total = formatter.format(duration);
+//        Log.e(TAG,"formatProgress===> "+ hms+"/"+total);
         return hms +"/"+total;
     }
 

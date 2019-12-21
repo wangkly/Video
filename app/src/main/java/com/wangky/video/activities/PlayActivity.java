@@ -18,6 +18,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
@@ -33,9 +36,6 @@ import com.wangky.video.R;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 public class PlayActivity extends AppCompatActivity implements MyPlayerView.UserOperationListener{
 
     private final String TAG = "PlayActivity.class";
@@ -45,6 +45,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
     private ImageButton mBack;
     private TextView mTitle;
     private ImageButton mToggle;
+    private TextView mCurrentTime;//用于显示当前时间
     //是否横屏播放
     private Boolean mLOrientation =false ;
 
@@ -74,6 +75,8 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
 
     private PlayerEventListener eventListener;
 
+    private Boolean mUpdateTime = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(TAG,"onCreate");
@@ -97,6 +100,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         mTitle = findViewById(R.id.m_title);
         mToggle = findViewById(R.id.exo_toggle);
         mLoading = findViewById(R.id.loading);
+        mCurrentTime = findViewById(R.id.current_time);
 
         Intent intent = getIntent();
         String data = intent.getStringExtra("data");
@@ -154,10 +158,16 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         playerView.setUserOperationListener(this);
+
+        //启动一个线程，更新显示当前时间
+        mUpdateTime = true;
+        this.updateCurrentTime();
+
     }
 
     @Override
     protected void onDestroy() {
+        mUpdateTime = false;
         player.release();
         super.onDestroy();
     }
@@ -218,7 +228,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
          */
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            Log.e(TAG,"onPlayerStateChanged===> "+ playbackState);
+            Log.i(TAG,"onPlayerStateChanged===> "+ playbackState);
             if(playWhenReady && playbackState == Player.STATE_READY){
                     mLoading.setVisibility(View.GONE);
             }else if (playWhenReady) {
@@ -241,7 +251,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
 
         @Override
         public void onPlayerError(ExoPlaybackException error) {
-            Log.e(TAG,"error===>"+error.getMessage());
+            Log.i(TAG,"error===>"+error.getMessage());
             Toast.makeText(PlayActivity.this,"出错了。。。",Toast.LENGTH_SHORT).show();
 
         }
@@ -292,7 +302,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
 
     @Override
     public void onVideoProgressChange(int type ,float percent) {
-        percent = percent / 10;//再缩小10倍
+        percent = percent / 100;//再缩小100倍
 //        Log.e(TAG,"onVideoProgressChange===> "+ type);
         if(progressChange == -1){
             progress_tip.setVisibility(View.VISIBLE);
@@ -339,6 +349,38 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         String total = formatter.format(duration);
 //        Log.e(TAG,"formatProgress===> "+ hms+"/"+total);
         return hms +"/"+total;
+    }
+
+
+
+    public void updateCurrentTime(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (mUpdateTime){
+                    //延迟两秒
+                    try {
+                        Thread.sleep( 1000 );
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    Log.e(TAG,"======updateCurrentTime========");
+                    long currentTimestamp = System.currentTimeMillis();
+                    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+                    String time = formatter.format(currentTimestamp);
+//                    Date currentTime =Calendar.getInstance().getTime();
+//                    String time = formatter.format(currentTime);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mCurrentTime.setText(time);
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
 }

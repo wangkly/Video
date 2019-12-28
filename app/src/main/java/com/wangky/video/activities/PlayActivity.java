@@ -302,7 +302,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
 
     @Override
     public void onVideoProgressChange(int type ,float percent) {
-        percent = percent / 100;//再缩小100倍
+//        percent = percent / 100;//再缩小100倍
 //        Log.e(TAG,"onVideoProgressChange===> "+ type);
         if(progressChange == -1){
             progress_tip.setVisibility(View.VISIBLE);
@@ -311,8 +311,8 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         if(duration == 0){
             duration =  player.getDuration();
         }
-
-        long progress = (long) (duration * percent);
+        //每次快进快退 按30秒范围内
+        long progress = (long) (30*1000* percent);
 
         if(type == MyPlayerView.PROGRESS_FORWARD){
            long current =  player.getCurrentPosition();

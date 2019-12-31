@@ -54,6 +54,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
     private int maxVolume = 0;
     private int currentVolume = -1;
     private int progressChange = -1;
+    private long current = 0;//视频播放当前进度
 
     private long duration = 0;//视频时长
 
@@ -179,6 +180,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         currentVolume = -1;
         mBrightness = -1f;
         progressChange = -1;
+        current = 0;
 
         new Handler().postDelayed(() -> {
             // 隐藏
@@ -213,6 +215,11 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         @Override
         public void onLoadingChanged(boolean isLoading) {
             Log.i(TAG,"onLoadingChanged===> " +isLoading);
+//            if(isLoading){
+//                mLoading.setVisibility(View.VISIBLE);
+//            }else{
+//                mLoading.setVisibility(View.GONE);
+//            }
         }
 
         /**
@@ -305,6 +312,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
 //        percent = percent / 100;//再缩小100倍
 //        Log.e(TAG,"onVideoProgressChange===> "+ type);
         if(progressChange == -1){
+            current = player.getCurrentPosition();
             progress_tip.setVisibility(View.VISIBLE);
             progressChange = 1;
         }
@@ -315,7 +323,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         long progress = (long) (30*1000* percent);
 
         if(type == MyPlayerView.PROGRESS_FORWARD){
-           long current =  player.getCurrentPosition();
+
            current += progress;
            if(current >= duration){
                current =duration;
@@ -324,7 +332,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
            player.seekTo(current);
            progress_icon.setImageResource(R.drawable.ic_forward);
         }else if(type == MyPlayerView.PROGRESS_BACKWARD){
-            long current =  player.getCurrentPosition();
+
             current -= progress;
             if(current <= 0){
                 current =0;

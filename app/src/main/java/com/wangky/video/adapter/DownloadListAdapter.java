@@ -62,8 +62,9 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
                 .setScale(2,BigDecimal.ROUND_DOWN);
 
 
-        holder.percent.setText(percent +"%");
-        holder.progressBar.setProgress(percent.intValue());
+        holder.percent.setText(percent.compareTo(BigDecimal.valueOf(100)) > 0 ? "-" :percent +"%");
+        holder.downloadStatus.setText(getStatusText(entity.getmTaskStatus()));
+        holder.progressBar.setProgress(percent.compareTo(BigDecimal.valueOf(100)) > 0 ? 0 :percent.intValue());
 
         if(entity.getmTaskStatus() == Const.DOWNLOAD_STOP
                 || entity.getmTaskStatus() == Const.DOWNLOAD_FAIL
@@ -91,7 +92,33 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
     }
 
 
-
+    public String getStatusText(int statusCode){
+        String statusText;
+        switch (statusCode){
+            case Const.DOWNLOAD_STOP:
+                statusText = "已停止";
+                break;
+            case Const.DOWNLOAD_FAIL:
+                statusText = "下载失败";
+                break;
+            case Const.DOWNLOAD_WAIT:
+                statusText = "等待中";
+                break;
+            case Const.DOWNLOAD_CONNECTION:
+                statusText = "连接中";
+                break;
+            case Const.DOWNLOAD_LOADING:
+                statusText = "下载中";
+                break;
+            case Const.DOWNLOAD_SUCCESS:
+                statusText = "已完成";
+                break;
+            default:
+                statusText = "连接中";
+                break;
+        }
+        return statusText;
+    }
 
 
     public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -101,6 +128,7 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         private TextView downloadSize;
         private TextView speed;
         private TextView percent;
+        private TextView downloadStatus;
 
         private ImageButton start;
         private ImageButton pause;
@@ -114,7 +142,7 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
             downloadSize = itemView.findViewById(R.id.downloadSize);
             speed = itemView.findViewById(R.id.speed);
             percent = itemView.findViewById(R.id.percent);
-
+            downloadStatus = itemView.findViewById(R.id.download_status);
             start = itemView.findViewById(R.id.down_start);
             pause = itemView.findViewById(R.id.pause);
 
@@ -137,6 +165,9 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
+            if(position < 0){
+                return;
+            }
             DownloadTaskEntity entity = mTasks.get(position);
             switch (v.getId()){
                 case R.id.down_start:

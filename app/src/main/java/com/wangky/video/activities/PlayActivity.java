@@ -236,23 +236,31 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             Log.i(TAG,"onPlayerStateChanged===> "+ playbackState);
-            if(playWhenReady && playbackState == Player.STATE_READY){
-                    mLoading.setVisibility(View.GONE);
-            }else if (playWhenReady) {
-                // Not playing because playback ended, the player is buffering, stopped or
-                // failed. Check playbackState and player.getPlaybackError for details.
-                if(playbackState == Player.STATE_BUFFERING){
-                    if(progressChange == -1){
-                       mLoading.setVisibility(View.VISIBLE);
-                    }
-                }else if(playbackState == Player.STATE_ENDED){
-//                    Toast.makeText(PlayActivity.this,"播放结束",Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                // Paused by app.
-                //貌似暂停时 playWhenReady ==false
-                Toast.makeText(PlayActivity.this,"暂停",Toast.LENGTH_SHORT).show();
+
+            if(playbackState == Player.STATE_BUFFERING){
+                mLoading.setVisibility(View.VISIBLE);
+            }else if(playbackState == Player.STATE_READY){
+                mLoading.setVisibility(View.GONE);
             }
+
+
+//            if(playWhenReady && playbackState == Player.STATE_READY){
+//                    mLoading.setVisibility(View.GONE);
+//            }else if (playWhenReady) {
+//                // Not playing because playback ended, the player is buffering, stopped or
+//                // failed. Check playbackState and player.getPlaybackError for details.
+//                if(playbackState == Player.STATE_BUFFERING){
+//                    if(progressChange == -1){
+//                       mLoading.setVisibility(View.VISIBLE);
+//                    }
+//                }else if(playbackState == Player.STATE_ENDED){
+////                    Toast.makeText(PlayActivity.this,"播放结束",Toast.LENGTH_SHORT).show();
+//                }
+//            } else {
+//                // Paused by app.
+//                //貌似暂停时 playWhenReady ==false
+//                Toast.makeText(PlayActivity.this,"暂停",Toast.LENGTH_SHORT).show();
+//            }
 
         }
 
@@ -373,7 +381,6 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
                         e.printStackTrace();
                     }
 
-                    Log.e(TAG,"======updateCurrentTime========");
                     long currentTimestamp = System.currentTimeMillis();
                     SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
                     String time = formatter.format(currentTimestamp);

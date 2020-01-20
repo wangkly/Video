@@ -11,4 +11,5 @@
     <string name="download_size">已下载</string>
     <string name="download_speed">下载速度:</string>
     <string name="percent">100%</string>
+    <string name="download_status">任务状态</string>
 </resources>

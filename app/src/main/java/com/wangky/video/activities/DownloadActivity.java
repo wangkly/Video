@@ -6,28 +6,26 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.wangky.video.R;
 import com.wangky.video.adapter.DownloadListAdapter;
 import com.wangky.video.beans.DownloadTaskEntity;
 import com.wangky.video.beans.TorrentInfoEntity;
-import com.wangky.video.dao.DBTools;
 import com.wangky.video.model.DownLoadModel;
 import com.wangky.video.model.DownLoadModelImp;
 import com.wangky.video.services.DownloadService;
 import com.wangky.video.util.Const;
+import com.wangky.video.util.DownUtil;
 import com.xunlei.downloadlib.XLTaskHelper;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class DownloadActivity extends AppCompatActivity {
 
@@ -80,6 +78,11 @@ public class DownloadActivity extends AppCompatActivity {
 
         @Override
         public void onDetail(DownloadTaskEntity task) {
+            //未下载完成，开启任务
+            if(Const.DOWNLOAD_STOP ==task.getmTaskStatus() || Const.DOWNLOAD_FAIL == task.getmTaskStatus()){
+                downLoadModel.startTask(task);
+            }
+
             List<TorrentInfoEntity> subs = task.getSubTasks();
             Intent intent = new Intent(DownloadActivity.this,SubTaskActivity.class);
             Bundle bundle = new Bundle();
@@ -148,6 +151,11 @@ public class DownloadActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         localBroadcastManager.unregisterReceiver(receiver);
+        //停止更新页面
+        DownUtil.getInstance().setIsLoopDown(false);
+        Intent intent = new Intent(DownloadActivity.this, DownloadService.class);
+        stopService(intent);
         super.onDestroy();
     }
+
 }

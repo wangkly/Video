@@ -46,7 +46,7 @@
         </activity>
         <activity
             android:name=".activities.PlayActivity"
-            android:configChanges="orientation|keyboard"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

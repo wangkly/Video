@@ -1,6 +1,7 @@
 package com.wangky.video.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import com.wangky.video.R;
 import com.wangky.video.beans.LocalVideoItem;
 
 import java.util.List;
+
+import wseemann.media.FFmpegMediaMetadataRetriever;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
 
@@ -56,8 +59,12 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
         LocalVideoItem item  = mList.get(position);
 
-
-        Glide.with(mContext).load(item.getCoverImg()).into(holder.image);
+        if(null !=item.getCoverImg()){
+            Glide.with(mContext).load(item.getCoverImg()).into(holder.image);
+        }else {
+            Bitmap bitmap = this.getVideoThumbnailIfNull(item.getData());
+            Glide.with(mContext).load(bitmap).into(holder.image);
+        }
 
         holder.title.setText(item.getTitle());
 
@@ -101,6 +108,27 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
     }
 
+
+    /**
+     * 如果通过contentProvider获取不到视频的缩略图，
+     * 通过这个方法再去查找一次
+     * @param filePath 文件的路径
+     * @return bitmap 视频文件缩略图
+     */
+    public Bitmap getVideoThumbnailIfNull(String filePath){
+        Bitmap bitmap = null;
+            FFmpegMediaMetadataRetriever retriever = new  FFmpegMediaMetadataRetriever();
+            try {
+                retriever.setDataSource(filePath); //file's path
+                bitmap = retriever.getFrameAtTime(100000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            finally{
+                retriever.release();
+            }
+           return bitmap;
+    }
 
 
 

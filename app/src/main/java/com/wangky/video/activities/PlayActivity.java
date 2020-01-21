@@ -1,5 +1,6 @@
 package com.wangky.video.activities;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -9,12 +10,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +51,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
     private TextView mTitle;
     private ImageButton mToggle;
     private TextView mCurrentTime;//用于显示当前时间
+    private ImageButton mMoreOperation;//更多操作
     //是否横屏播放
     private Boolean mLOrientation =false ;
 
@@ -102,7 +108,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         mToggle = findViewById(R.id.exo_toggle);
         mLoading = findViewById(R.id.loading);
         mCurrentTime = findViewById(R.id.current_time);
-
+        mMoreOperation = findViewById(R.id.more_operation);
         Intent intent = getIntent();
         String data = intent.getStringExtra("data");
         String title = intent.getStringExtra("title");
@@ -155,6 +161,52 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
         });
+
+        mMoreOperation.setOnClickListener(v -> {
+            int windowWidth = getResources().getDisplayMetrics().widthPixels;
+            int windowHeight = getResources().getDisplayMetrics().heightPixels;
+
+            Dialog dialog = new Dialog(PlayActivity.this,R.style.operationDialog);
+            View contentView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.operation_dialog,null);
+            dialog.setContentView(contentView);
+
+            RadioGroup rg = contentView.findViewById(R.id.speed_radio_group);
+
+            rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                }
+            });
+
+//            OperationFragment fragment = new OperationFragment();
+//            FragmentManager fm = getSupportFragmentManager();
+//            FragmentTransaction transaction =  fm.beginTransaction();
+//            transaction.replace(R.id.operation_fragment,fragment);
+//            transaction.commit();
+
+            ViewGroup.LayoutParams layoutParams = contentView.getLayoutParams();
+            if(mLOrientation){
+                //竖屏宽度为屏幕宽度，高度为1/2，放在屏幕右侧
+                layoutParams.width = windowWidth/2;
+                layoutParams.height = windowHeight;
+                contentView.setLayoutParams(layoutParams);
+                dialog.getWindow().setGravity(Gravity.RIGHT);
+                dialog.getWindow().setWindowAnimations(R.style.SlideDialog_Animation);
+
+            }else{
+                //竖屏宽度为屏幕宽度，高度为1/2,放在底部
+                layoutParams.width = windowWidth;
+                layoutParams.height = windowHeight/2;
+                contentView.setLayoutParams(layoutParams);
+                dialog.getWindow().setGravity(Gravity.BOTTOM);
+                dialog.getWindow().setWindowAnimations(R.style.BottomDialog_Animation);
+            }
+
+            dialog.show();
+        });
+
+
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);

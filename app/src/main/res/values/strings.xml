@@ -18,5 +18,10 @@
     <string name="speed_1_5">1.5</string>
     <string name="speed_2">2.0</string>
     <string name="speed_2_5">2.5</string>
-
+    <string name="view_scale">画面尺寸</string>
+    <string name="view_fit_height">高度</string>
+    <string name="view_fit_with_width">宽度</string>
+    <string name="view_fit_fill">铺满</string>
+    <string name="view_fit_zoom">放大</string>
+    <string name="view_default">默认</string>
 </resources>

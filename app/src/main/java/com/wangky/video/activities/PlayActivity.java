@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -37,11 +38,20 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.wangky.video.MyPlayerView;
 import com.wangky.video.R;
+import com.wangky.video.view.OperationDialogFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
-public class PlayActivity extends AppCompatActivity implements MyPlayerView.UserOperationListener{
+import static com.google.android.exoplayer2.C.VIDEO_SCALING_MODE_SCALE_TO_FIT;
+import static com.google.android.exoplayer2.C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
+import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FILL;
+import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT;
+import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT;
+import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH;
+import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM;
+
+public class PlayActivity extends AppCompatActivity implements MyPlayerView.UserOperationListener ,OperationDialogFragment.OnOperationListener{
 
     private final String TAG = "PlayActivity.class";
 
@@ -63,6 +73,8 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
     private long current = 0;//视频播放当前进度
 
     private long duration = 0;//视频时长
+
+    private MyPlayerView playerView;
 
     private LinearLayout brightness;
 
@@ -123,7 +135,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
-        MyPlayerView playerView = findViewById(R.id.player);
+        playerView = findViewById(R.id.player);
         player = ExoPlayerFactory.newSimpleInstance(this);
         playerView.setPlayer(player);
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this,"Video"));
@@ -163,47 +175,16 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         });
 
         mMoreOperation.setOnClickListener(v -> {
-            int windowWidth = getResources().getDisplayMetrics().widthPixels;
-            int windowHeight = getResources().getDisplayMetrics().heightPixels;
+            OperationDialogFragment fragment = new OperationDialogFragment();
+            float speed = player.getPlaybackParameters().speed;
+            int resizeMode = playerView.getResizeMode();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("orientation",mLOrientation);
+            bundle.putSerializable("speed",speed);
+            bundle.putSerializable("resizeMode",resizeMode);
+            fragment.setArguments(bundle);
+            fragment.show(getSupportFragmentManager(),"operationFragment");
 
-            Dialog dialog = new Dialog(PlayActivity.this,R.style.operationDialog);
-            View contentView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.operation_dialog,null);
-            dialog.setContentView(contentView);
-
-            RadioGroup rg = contentView.findViewById(R.id.speed_radio_group);
-
-            rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                }
-            });
-
-//            OperationFragment fragment = new OperationFragment();
-//            FragmentManager fm = getSupportFragmentManager();
-//            FragmentTransaction transaction =  fm.beginTransaction();
-//            transaction.replace(R.id.operation_fragment,fragment);
-//            transaction.commit();
-
-            ViewGroup.LayoutParams layoutParams = contentView.getLayoutParams();
-            if(mLOrientation){
-                //竖屏宽度为屏幕宽度，高度为1/2，放在屏幕右侧
-                layoutParams.width = windowWidth/2;
-                layoutParams.height = windowHeight;
-                contentView.setLayoutParams(layoutParams);
-                dialog.getWindow().setGravity(Gravity.RIGHT);
-                dialog.getWindow().setWindowAnimations(R.style.SlideDialog_Animation);
-
-            }else{
-                //竖屏宽度为屏幕宽度，高度为1/2,放在底部
-                layoutParams.width = windowWidth;
-                layoutParams.height = windowHeight/2;
-                contentView.setLayoutParams(layoutParams);
-                dialog.getWindow().setGravity(Gravity.BOTTOM);
-                dialog.getWindow().setWindowAnimations(R.style.BottomDialog_Animation);
-            }
-
-            dialog.show();
         });
 
 
@@ -449,5 +430,66 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
             }
         }).start();
     }
+
+
+    /**
+     * 设置播放速度
+     * com.wangky.video.view.OperationDialogFragment.OnOperationListener#onPlaySpeedChange(float)
+     * @param speed 播放速度
+     */
+    @Override
+    public void onPlaySpeedChange(float speed) {
+        this.setPlaybackSpeed(speed);
+    }
+
+    @Override
+    public void onViewScaleChange(int scale) {
+        this.setVideoScalingMode(scale);
+    }
+
+
+    /**
+     * 调整播放速度 倍速
+     */
+    public void setPlaybackSpeed(float speed){
+        PlaybackParameters parameters = new PlaybackParameters(speed);
+        if(null != player){
+            player.setPlaybackParameters(parameters);
+        }
+    }
+
+
+    /**
+     * 设置播放画面 缩放大小
+     *
+     */
+    public void setVideoScalingMode(int scale){
+        if(null != playerView){
+            switch (scale){
+                case 0:
+                    playerView.setResizeMode(RESIZE_MODE_FIT);
+                    break;
+                case 1:
+                    playerView.setResizeMode(RESIZE_MODE_FIXED_WIDTH);
+                    break;
+                case 2:
+                    playerView.setResizeMode(RESIZE_MODE_FIXED_HEIGHT);
+                    break;
+
+                case 3:
+                    playerView.setResizeMode(RESIZE_MODE_FILL);
+                    break;
+                case 4:
+                    playerView.setResizeMode(RESIZE_MODE_ZOOM);
+                    break;
+
+                default:
+                    playerView.setResizeMode(RESIZE_MODE_FIT);
+                    break;
+            }
+        }
+    }
+
+
 
 }

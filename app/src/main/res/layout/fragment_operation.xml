@@ -3,62 +3,134 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#fff"
     tools:context=".view.OperationFragment">
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:padding="20dp">
 
-        <TextView
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/play_speed"/>
+            android:orientation="vertical">
 
-        <RadioGroup
-            android:id="@+id/speed_radio_group"
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/play_speed"/>
+
+            <RadioGroup
+                android:id="@+id/speed_radio_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/speed_0_5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="0.5"
+                    android:text="@string/speed_0_5"/>
+
+                <RadioButton
+                    android:id="@+id/speed_normal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="1"
+                    android:text="@string/speed_normal"/>
+
+                <RadioButton
+                    android:id="@+id/speed_1_5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="1.5"
+                    android:text="@string/speed_1_5"/>
+
+                <RadioButton
+                    android:id="@+id/speed_2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="2"
+                    android:text="@string/speed_2"/>
+
+            </RadioGroup>
+
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
 
-            <RadioButton
-                android:id="@+id/speed_0_5"
-                android:layout_width="0dp"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/speed_0_5"/>
+                android:text="@string/view_scale"/>
 
-            <RadioButton
-                android:id="@+id/speed_normal"
-                android:layout_width="0dp"
+            <RadioGroup
+                android:id="@+id/scale_radio_group"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/speed_normal"/>
+                android:orientation="horizontal">
 
-            <RadioButton
-                android:id="@+id/speed_1_5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/speed_1_5"/>
+                <RadioButton
+                    android:id="@+id/scale_default"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="0"
+                    android:text="@string/view_default"/>
 
-            <RadioButton
-                android:id="@+id/speed_2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/speed_2"/>
+                <RadioButton
+                    android:id="@+id/scale_fit_height"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="1"
+                    android:text="@string/view_fit_height"/>
 
-            <RadioButton
-                android:id="@+id/speed_2_5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/speed_2_5"/>
+                <RadioButton
+                    android:id="@+id/scale_fit_with_width"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="2"
+                    android:text="@string/view_fit_with_width"/>
 
-        </RadioGroup>
+                <RadioButton
+                    android:id="@+id/scale_fit_fill"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="3"
+                    android:text="@string/view_fit_fill"/>
+
+                <RadioButton
+                    android:id="@+id/scale_fit_zoom"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:tag="4"
+                    android:text="@string/view_fit_zoom"/>
+
+            </RadioGroup>
+
+
+        </LinearLayout>
+
 
     </LinearLayout>
+
+
 
 </FrameLayout>

@@ -11,6 +11,9 @@ public class Const {
      public static final int BT_DOWNLOAD=2;
 
      public static final String File_SAVE_PATH= Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "MyVideoDownload";
+     public static final String THUMBNAIL_SAVE_PATH= File_SAVE_PATH + File.separator + "thumbnail";
+
+
              ;
 //     public static final String DB_NAME="sddmandownload.db";
 //     public static final String DB_SDCARD_PATH= FileTools.getSDCardPath()+ x.app().getString(R.string.app_db_path);

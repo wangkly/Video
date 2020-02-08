@@ -14,7 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.wangky.video.R;
 import com.wangky.video.beans.LocalVideoItem;
+import com.wangky.video.util.Const;
+import com.wangky.video.util.MD5Util;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import wseemann.media.FFmpegMediaMetadataRetriever;
@@ -58,9 +63,12 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
 
         LocalVideoItem item  = mList.get(position);
-
+        File file = new File(Const.THUMBNAIL_SAVE_PATH+File.separator+MD5Util.md5Encode32(item.getData())+".jpg");
         if(null !=item.getCoverImg()){
             Glide.with(mContext).load(item.getCoverImg()).into(holder.image);
+        }else if(file.exists()){//查看是否有本地缓存
+           Glide.with(mContext).load(file).into(holder.image);
+
         }else {
             Bitmap bitmap = this.getVideoThumbnailIfNull(item.getData());
             Glide.with(mContext).load(bitmap).into(holder.image);
@@ -121,6 +129,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
             try {
                 retriever.setDataSource(filePath); //file's path
                 bitmap = retriever.getFrameAtTime(100000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC );
+                //本地缓存一份
+                saveBitmapToLocal(bitmap,filePath);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -130,7 +140,32 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
            return bitmap;
     }
 
-
-
+    /**
+     * 将bitmap保存到本地存储
+     * @param bitmap
+     */
+    public void saveBitmapToLocal(Bitmap bitmap,String filePath){
+       String saveDir =  Const.THUMBNAIL_SAVE_PATH;
+       File dir = new File(saveDir);
+       if(!dir.exists()){
+           dir.mkdirs();
+       }
+       String md5Str = MD5Util.md5Encode32(filePath);
+       try {
+           File saveFile = new File(saveDir +File.separator+ md5Str +".jpg");
+            if(saveFile.exists()) {
+                return;
+            }else{
+                saveFile.createNewFile();
+            }
+            FileOutputStream fo = new FileOutputStream(saveFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG,50,fo);
+            fo.flush();
+            fo.close();
+           } catch (IOException e) {
+               e.printStackTrace();
+           }finally {
+       }
+    }
 
 }

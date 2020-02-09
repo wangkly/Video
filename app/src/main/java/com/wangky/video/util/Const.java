@@ -7,6 +7,8 @@ import java.io.File;
 
 public class Const {
 
+    public static final String ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
+
     public static final int URL_DOWNLOAD=1;
      public static final int BT_DOWNLOAD=2;
 

@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.wangky.video.activities.DownloadActivity;
+import com.wangky.video.activities.FilePickerActivity;
 import com.wangky.video.activities.MagnetActivity;
 import com.wangky.video.activities.PlayActivity;
 import com.wangky.video.activities.TorrentDetailActivity;
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private static final  int PERMISSION_REQUESTCODE = 1;
 
     private final int OPEN_FILE_MANAGER = 2;
+
+    private final int CHOOSE_FILE = 3;
 
     private RecyclerView mRecyclerView;
 
@@ -156,6 +159,11 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, MagnetActivity.class);
             startActivity(intent);
         }
+        //打开文件浏览器
+        if(id == R.id.action_open_file){
+            Intent intent = new Intent(MainActivity.this, FilePickerActivity.class);
+            startActivityForResult(intent,CHOOSE_FILE);
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -202,9 +210,27 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
 
+                case CHOOSE_FILE:
+                    String filePath = data.getStringExtra("filePath");
+                    if(null != filePath && !filePath.equals("")){
+                        String suff = filePath.substring(filePath.lastIndexOf(".") + 1).toUpperCase();
+                        if("TORRENT".equals(suff)) {
+                            Intent in = new Intent(MainActivity.this,TorrentDetailActivity.class);
+                            in.putExtra("type","torrent");
+                            in.putExtra("path",filePath);
+                            startActivity(in);
+                        }else{
+
+
+                        }
+                    }
+                    break;
+
                 default:
 
                     break;
+
+
             }
         }
     }

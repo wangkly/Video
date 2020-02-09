@@ -2,6 +2,7 @@
     <string name="app_name">VPlayer</string>
     <string name="action_settings">Settings</string>
     <string name="cover">cover</string>
+    <string name="action_open_file">打开...</string>
     <string name="action_open">打开种子</string>
     <string name="action_magnet">磁力链接</string>
     <string name="action_analysis">解析</string>
@@ -24,4 +25,9 @@
     <string name="view_fit_fill">铺满</string>
     <string name="view_fit_zoom">放大</string>
     <string name="view_default">默认</string>
+    <string name="back_to_root">根目录</string>
+    <string name="sort_by_name_asc">按文件名排序(升序)</string>
+    <string name="sort_by_name_desc">按文件名排序(降序)</string>
+    <string name="sort_by_modify_time_asc">按时间排序(升序)</string>
+    <string name="sort_by_modify_time_desc">按时间排序(降序)</string>
 </resources>

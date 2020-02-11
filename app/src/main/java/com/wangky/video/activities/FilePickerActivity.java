@@ -7,13 +7,11 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +22,6 @@ import com.wangky.video.enums.FileTyp;
 import com.wangky.video.util.Const;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -62,7 +59,7 @@ public class FilePickerActivity extends AppCompatActivity implements LocalFileAd
 
         mFilePickerList.setAdapter(adapter);
         mFilePickerList.setLayoutManager(new LinearLayoutManager(FilePickerActivity.this,RecyclerView.VERTICAL,false));
-        mFilePickerList.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+//        mFilePickerList.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
 
         initData();
     }

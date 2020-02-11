@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.wangky.video.R;
 import com.wangky.video.beans.TorrentInfoEntity;
+import com.wangky.video.util.FileTools;
 
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class TorrentTaskListAdapter extends RecyclerView.Adapter<TorrentTaskList
 
         TorrentInfoEntity fileInfo = mFlieList.get(position);
         holder.fTitle.setText(fileInfo.getmFileName());
-
+        holder.taskFileSize.setText(FileTools.convertFileSize(fileInfo.getmFileSize()));
     }
 
 
@@ -71,11 +72,12 @@ public class TorrentTaskListAdapter extends RecyclerView.Adapter<TorrentTaskList
     class FileViewHolder extends RecyclerView.ViewHolder{
 
         private TextView fTitle;
-
+        private TextView taskFileSize;
 
         public FileViewHolder(@NonNull View itemView) {
             super(itemView);
             fTitle = itemView.findViewById(R.id.file_title);
+            taskFileSize = itemView.findViewById(R.id.task_file_size);
             itemView.setTag(this);
             itemView.setOnClickListener(mListener);
 

@@ -50,7 +50,11 @@ public class MyPlayerView extends PlayerView {
             float oldY = e1.getY();
             float y =  e2.getRawY();
             float x = e2.getRawX();
-            if(firstScroll){// 以触摸屏幕后第一次滑动为标准，避免在屏幕上操作切换混乱
+            if(firstScroll){
+                if(!MyPlayerView.super.isControllerVisible()){
+                    MyPlayerView.super.showController();
+                }
+                // 以触摸屏幕后第一次滑动为标准，避免在屏幕上操作切换混乱
                 // 横向的距离变化大则调整进度，纵向的变化大则调整音量、亮度
                 if(Math.abs(distanceX) >= Math.abs(distanceY)){
                     GESTURE_FLAG = GESTURE_MODIFY_PROGRESS;
@@ -93,6 +97,7 @@ public class MyPlayerView extends PlayerView {
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             Log.d("-------->playing","onSingleTapUp");
+            MyPlayerView.super.performClick();
             return super.onSingleTapUp(e);
         }
 
@@ -101,7 +106,7 @@ public class MyPlayerView extends PlayerView {
         public boolean onDown(MotionEvent e) {
             Log.d("-------->playing","onDown");
             firstScroll = true;
-            return MyPlayerView.super.performClick();
+            return true;
         }
     };
 

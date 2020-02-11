@@ -117,16 +117,15 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         Intent intent = getIntent();
         String data = intent.getStringExtra("data");
         String title = intent.getStringExtra("title");
-        Boolean orientation = intent.getBooleanExtra("LOrientation",false);
-
-        if(orientation){
-            //横屏
-            mLOrientation = true;
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }else {
-            mLOrientation = false;
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
+//        Boolean orientation = intent.getBooleanExtra("LOrientation",false);
+//        if(orientation){
+//            //横屏
+//            mLOrientation = true;
+//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//        }else {
+//            mLOrientation = false;
+//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//        }
 
         playerView = findViewById(R.id.player);
         player = ExoPlayerFactory.newSimpleInstance(this);
@@ -207,13 +206,14 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         mBrightness = -1f;
         progressChange = -1;
         current = 0;
+        // 隐藏
+        brightness.setVisibility(View.GONE);
+        volume_view.setVisibility(View.GONE);
+        progress_tip.setVisibility(View.GONE);
 
-        new Handler().postDelayed(() -> {
-            // 隐藏
-            brightness.setVisibility(View.GONE);
-            volume_view.setVisibility(View.GONE);
-            progress_tip.setVisibility(View.GONE);
-        },1000);
+//        new Handler().postDelayed(() -> {
+//
+//        },1000);
     }
 
 

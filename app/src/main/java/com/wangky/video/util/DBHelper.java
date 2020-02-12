@@ -28,6 +28,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     "mFileIndex integer,mFileName text,mFileSize integer,path text,mSubPath text,playUrl text,hash text)";
 
 
+    public static final String RECENT_VISIT ="create table recent_visit(id integer primary key autoincrement ,path text,createTime integer)";
 
     private DBHelper(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -47,12 +48,14 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_DOWNLOAD);
         db.execSQL(CREATE_SUBTASKS);
+        db.execSQL(RECENT_VISIT);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists download");
         db.execSQL("drop table if exists subtask");
+        db.execSQL("drop table if exists recent_visit");
     }
 
 

@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.wangky.video.R;
 import com.wangky.video.adapter.LocalFileAdapter;
 import com.wangky.video.beans.LocalFile;
+import com.wangky.video.dao.DBTools;
 import com.wangky.video.enums.FileTyp;
 import com.wangky.video.util.Const;
 
@@ -48,6 +49,14 @@ public class FilePickerActivity extends AppCompatActivity implements LocalFileAd
         Toolbar toolbar = findViewById(R.id.file_picker_toolbar);
         setSupportActionBar(toolbar);
         setTitle("文件选择");
+        //获取上一次访问的路径
+        String lastPath = DBTools.getInstance().getRecentVisitPath();
+        if(null !=lastPath){
+            File file = new File(lastPath);
+            if(file.exists()){
+                currentPath = file.getParent();
+            }
+        }
         mCurrentPath.setText(currentPath);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -93,10 +102,10 @@ public class FilePickerActivity extends AppCompatActivity implements LocalFileAd
             return Collections.EMPTY_LIST;
         }
         for (File file :roots){
-            if(file.isDirectory()){
+            if(file.isDirectory() && !file.isHidden()){
                 LocalFile localFile = new LocalFile(file.getName(), FileTyp.FOLDER,file.lastModified(), file.length(),file.getAbsolutePath());
                 files.add(localFile);
-            }else if(file.isFile()){
+            }else if(file.isFile() && !file.isHidden()){
                 LocalFile localFile = new LocalFile(file.getName(), FileTyp.FILE,file.lastModified(), file.length(),file.getAbsolutePath());
                 files.add(localFile);
             }
@@ -215,6 +224,8 @@ public class FilePickerActivity extends AppCompatActivity implements LocalFileAd
             currentPath = filePath;
             initData();
         }else {
+            //保存访问路径
+            DBTools.getInstance().saveRecentVisitPath(file.getFilePath());
             //选择的是文件
             Intent intent = new Intent();
             intent.putExtra("filePath",file.getFilePath());

@@ -141,14 +141,14 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_open) {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("*/*");
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            startActivityForResult(intent,OPEN_FILE_MANAGER);
-
-            return true;
-        }
+//        if (id == R.id.action_open) {
+//            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//            intent.setType("*/*");
+//            intent.addCategory(Intent.CATEGORY_OPENABLE);
+//            startActivityForResult(intent,OPEN_FILE_MANAGER);
+//
+//            return true;
+//        }
 
         if(id == R.id.download){
             Intent intent = new Intent(MainActivity.this, DownloadActivity.class);

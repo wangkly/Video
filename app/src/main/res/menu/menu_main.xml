@@ -13,10 +13,10 @@
         android:orderInCategory="100"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_open"
-        android:title="@string/action_open"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
+    <!--<item android:id="@+id/action_open"-->
+        <!--android:title="@string/action_open"-->
+        <!--android:orderInCategory="100"-->
+        <!--app:showAsAction="never" />-->
 
     <item
         android:id="@+id/action_magnet"

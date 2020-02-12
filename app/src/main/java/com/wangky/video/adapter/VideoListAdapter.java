@@ -63,7 +63,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
 
         LocalVideoItem item  = mList.get(position);
-        File file = new File(Const.THUMBNAIL_SAVE_PATH+File.separator+MD5Util.md5Encode32(item.getData())+".jpg");
+        File file = new File(Const.THUMBNAIL_SAVE_PATH+File.separator+MD5Util.md5Encode32(item.getData())+".webp");
         if(null !=item.getCoverImg()){
             Glide.with(mContext).load(item.getCoverImg()).into(holder.image);
         }else if(file.exists()){//查看是否有本地缓存
@@ -129,8 +129,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
             try {
                 retriever.setDataSource(filePath); //file's path
                 bitmap = retriever.getFrameAtTime(100000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC );
-                //本地缓存一份
-                saveBitmapToLocal(bitmap,filePath);
+                if(null != bitmap){
+                    //本地缓存一份
+                    saveBitmapToLocal(bitmap,filePath);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -152,14 +154,14 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
        }
        String md5Str = MD5Util.md5Encode32(filePath);
        try {
-           File saveFile = new File(saveDir +File.separator+ md5Str +".jpg");
+           File saveFile = new File(saveDir +File.separator+ md5Str +".webp");
             if(saveFile.exists()) {
                 return;
             }else{
                 saveFile.createNewFile();
             }
             FileOutputStream fo = new FileOutputStream(saveFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG,50,fo);
+            bitmap.compress(Bitmap.CompressFormat.WEBP,50,fo);
             fo.flush();
             fo.close();
            } catch (IOException e) {

@@ -292,4 +292,32 @@ public class DBTools {
      return null;
    }
 
+
+    /**
+     * 保存访问的目录
+     * @param path
+     * @return
+     */
+   public boolean saveRecentVisitPath(String path){
+        ContentValues values = new ContentValues();
+        values.put("path",path);
+        values.put("createTime",System.currentTimeMillis());
+        long count  = db.insert("recent_visit",null,values);
+        return count == 1;
+   }
+
+
+    /**
+     * 获取最近一次访问的目录
+     * @return
+     */
+   public String getRecentVisitPath(){
+       Cursor cursor = db.query("recent_visit",null,null,null,null,null,"createTime desc","1");
+        if(null != cursor && cursor.moveToFirst()){
+          String path = cursor.getString(cursor.getColumnIndex("path"));
+          return path;
+        }
+        return  null;
+   }
+
 }

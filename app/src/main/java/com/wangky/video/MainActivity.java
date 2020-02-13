@@ -5,24 +5,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
-import com.wangky.video.activities.DownloadActivity;
-import com.wangky.video.activities.FilePickerActivity;
-import com.wangky.video.activities.MagnetActivity;
-import com.wangky.video.activities.PlayActivity;
-import com.wangky.video.activities.TorrentDetailActivity;
-import com.wangky.video.adapter.VideoListAdapter;
-import com.wangky.video.beans.LocalVideoItem;
-import com.wangky.video.util.FileUtils;
-import com.wangky.video.util.Utils;
-
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +21,20 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.wangky.video.activities.DownloadActivity;
+import com.wangky.video.activities.FilePickerActivity;
+import com.wangky.video.activities.MagnetActivity;
+import com.wangky.video.activities.PlayActivity;
+import com.wangky.video.activities.TorrentDetailActivity;
+import com.wangky.video.adapter.VideoListAdapter;
+import com.wangky.video.beans.LocalVideoItem;
+import com.wangky.video.task.SaveThumbnailTask;
+import com.wangky.video.util.FileUtils;
+import com.wangky.video.util.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -121,7 +124,17 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(layoutManager);
-    }
+
+        //起任务保存视频缩略图
+        List<String> paths = new ArrayList<>();
+        for(LocalVideoItem item : mlist){
+            if(null == item.getCoverImg()){
+                paths.add(item.getData());
+            }
+        }
+        SaveThumbnailTask task = new SaveThumbnailTask();
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,paths);
+     }
 
 
 

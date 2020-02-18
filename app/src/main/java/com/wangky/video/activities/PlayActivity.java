@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SeekParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -129,6 +130,7 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
 
         playerView = findViewById(R.id.player);
         player = ExoPlayerFactory.newSimpleInstance(this);
+        player.setSeekParameters(SeekParameters.NEXT_SYNC);
         playerView.setPlayer(player);
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this,"Video"));
 

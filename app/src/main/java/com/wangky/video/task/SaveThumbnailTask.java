@@ -2,6 +2,7 @@ package com.wangky.video.task;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.wangky.video.util.Const;
 import com.wangky.video.util.MD5Util;
@@ -18,11 +19,18 @@ public class SaveThumbnailTask extends AsyncTask <List<String>,Void,Void>{
 
     @Override
     protected Void doInBackground(List<String>... lists) {
-       List<String> paths =  lists[0];
+        String saveDir =  Const.THUMBNAIL_SAVE_PATH;
+        List<String> paths =  lists[0];
         Bitmap bitmap;
         FFmpegMediaMetadataRetriever retriever = new  FFmpegMediaMetadataRetriever();
         for (String path: paths){
             try{
+                String md5Str = MD5Util.md5Encode32(path);
+                File saveFile = new File(saveDir +File.separator+ md5Str +".webp");
+                if(saveFile.exists()) {
+                    continue;
+                }
+                Log.e("saveThumbnailTask====>",Thread.currentThread().getName());
                 retriever.setDataSource(path); //file's path
                 bitmap = retriever.getFrameAtTime(100000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC );
                 if(null != bitmap){

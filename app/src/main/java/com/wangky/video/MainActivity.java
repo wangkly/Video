@@ -132,8 +132,21 @@ public class MainActivity extends AppCompatActivity {
                 paths.add(item.getData());
             }
         }
-        SaveThumbnailTask task = new SaveThumbnailTask();
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,paths);
+
+        int pageCount = 10;
+        int lastPageCount = paths.size() % pageCount;
+        int pageNo = paths.size() / pageCount;
+        int fromIndex, toIndex;
+
+        for(int i= 0;i <= pageNo; i++){
+            fromIndex = i * pageCount;
+            toIndex = i==pageNo && lastPageCount !=0 ? i*pageCount+lastPageCount -1 : (i+1) * pageCount -1;
+            List<String> subs = paths.subList(fromIndex,toIndex+1);
+            SaveThumbnailTask task = new SaveThumbnailTask();
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,subs);
+        }
+
+
      }
 
 

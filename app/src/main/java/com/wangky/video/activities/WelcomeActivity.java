@@ -75,4 +75,17 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         mPermissionHelper.onActivityResult(requestCode, resultCode, data);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(Build.VERSION.SDK_INT < 23){ //android 6.0 以下
+            nextOperation();
+        }else if(mPermissionHelper.isAllRequestedPermissionGranted()){ //授权了所有的权限
+            nextOperation();
+        }else {
+            //请求权限
+            mPermissionHelper.applyPermissions();
+        }
+    }
 }

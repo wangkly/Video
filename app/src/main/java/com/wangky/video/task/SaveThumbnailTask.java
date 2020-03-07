@@ -1,6 +1,7 @@
 package com.wangky.video.task;
 
 import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -22,7 +23,8 @@ public class SaveThumbnailTask extends AsyncTask <List<String>,Void,Void>{
         String saveDir =  Const.THUMBNAIL_SAVE_PATH;
         List<String> paths =  lists[0];
         Bitmap bitmap;
-        FFmpegMediaMetadataRetriever retriever = new  FFmpegMediaMetadataRetriever();
+//        FFmpegMediaMetadataRetriever retriever = new  FFmpegMediaMetadataRetriever();
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         for (String path: paths){
             try{
                 String md5Str = MD5Util.md5Encode32(path);
@@ -31,8 +33,16 @@ public class SaveThumbnailTask extends AsyncTask <List<String>,Void,Void>{
                     continue;
                 }
                 Log.e("saveThumbnailTask====>",Thread.currentThread().getName());
-                retriever.setDataSource(path); //file's path
-                bitmap = retriever.getFrameAtTime(100000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC );
+//                retriever.setDataSource(path); //file's path
+//                bitmap = retriever.getFrameAtTime(100000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC );
+
+//                android.media.ThumbnailUtils#createVideoThumbnail(java.io.File, android.util.Size, android.os.CancellationSignal)
+
+                //https://www.niwoxuexi.com/blog/cnbzlj/article/1017
+
+                retriever.setDataSource(path);
+                bitmap = retriever.getFrameAtTime();
+
                 if(null != bitmap){
                     //本地缓存一份
                     saveBitmapToLocal(bitmap,path);

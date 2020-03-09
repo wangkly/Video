@@ -134,13 +134,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         int pageCount = 10;
-        int lastPageCount = paths.size() % pageCount;
         int pageNo = paths.size() / pageCount;
+        int lastPageCount = paths.size() % pageCount;
+        if(lastPageCount == 0){
+            pageNo--;//最后一页为0时, 那么总页数要-1,比如总共100，分9页,因为list下标从0开始
+        }
         int fromIndex, toIndex;
 
         for(int i= 0;i <= pageNo; i++){
             fromIndex = i * pageCount;
-            toIndex = i==pageNo && lastPageCount !=0 ? i*pageCount+lastPageCount -1 : (i+1) * pageCount -1;
+            toIndex = i==pageNo && lastPageCount !=0 ? i*pageCount+lastPageCount -1 : ((i+1) * pageCount) -1;
             List<String> subs = paths.subList(fromIndex,toIndex+1);
             SaveThumbnailTask task = new SaveThumbnailTask();
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,subs);

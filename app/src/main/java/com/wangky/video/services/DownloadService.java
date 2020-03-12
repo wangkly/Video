@@ -22,8 +22,10 @@ public class DownloadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        DownUtil.getInstance().setIsLoopDown(true);
-        new DownloadTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if(!DownUtil.getInstance().isIsLoopDown()){//当前是停止状态，需要启动
+            DownUtil.getInstance().setIsLoopDown(true);
+            new DownloadTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
 
         return super.onStartCommand(intent, flags, startId);
     }

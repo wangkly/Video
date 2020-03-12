@@ -4,7 +4,7 @@ import com.wangky.video.beans.DownloadTaskEntity;
 
 public class DownUtil {
     private static DownUtil downUtil=null;
-    private static boolean isLoopDown=true;
+    private static boolean isLoopDown=false;
     public DownUtil(){
 
     }

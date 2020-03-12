@@ -23,18 +23,18 @@ public class SaveThumbnailTask extends AsyncTask <List<String>,Void,Void>{
         String saveDir =  Const.THUMBNAIL_SAVE_PATH;
         List<String> paths =  lists[0];
         Bitmap bitmap;
-//        FFmpegMediaMetadataRetriever retriever = new  FFmpegMediaMetadataRetriever();
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        FFmpegMediaMetadataRetriever retriever = new  FFmpegMediaMetadataRetriever();
+//        MediaMetadataRetriever retriever = new MediaMetadataRetriever();//用系统的MediaMetadataRetriever 存在截取不到缩略图的情况
         for (String path: paths){
             try{
                 String md5Str = MD5Util.md5Encode32(path);
-                File saveFile = new File(saveDir +File.separator+ md5Str +".webp");
+                File saveFile = new File(saveDir +File.separator+ md5Str);
                 if(saveFile.exists()) {
                     continue;
                 }
                 Log.e("saveThumbnailTask====>",Thread.currentThread().getName());
-//                retriever.setDataSource(path); //file's path
-//                bitmap = retriever.getFrameAtTime(100000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC );
+                retriever.setDataSource(path); //file's path
+                bitmap = retriever.getFrameAtTime(100000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC );
 
 //                android.media.ThumbnailUtils#createVideoThumbnail(java.io.File, android.util.Size, android.os.CancellationSignal)
 
@@ -72,7 +72,7 @@ public class SaveThumbnailTask extends AsyncTask <List<String>,Void,Void>{
         }
         String md5Str = MD5Util.md5Encode32(filePath);
         try {
-            File saveFile = new File(saveDir +File.separator+ md5Str +".webp");
+            File saveFile = new File(saveDir +File.separator+ md5Str);
             if(saveFile.exists()) {
                 return;
             }else{

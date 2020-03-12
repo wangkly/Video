@@ -63,7 +63,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
 
         LocalVideoItem item  = mList.get(position);
-        File file = new File(Const.THUMBNAIL_SAVE_PATH+File.separator+MD5Util.md5Encode32(item.getData())+".webp");
+        File file = new File(Const.THUMBNAIL_SAVE_PATH+File.separator+MD5Util.md5Encode32(item.getData()));
         if(null !=item.getCoverImg()){
             Glide.with(mContext).load(item.getCoverImg()).into(holder.image);
         }else if(file.exists()){//查看是否有本地缓存
@@ -154,7 +154,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
        }
        String md5Str = MD5Util.md5Encode32(filePath);
        try {
-           File saveFile = new File(saveDir +File.separator+ md5Str +".webp");
+           File saveFile = new File(saveDir +File.separator+ md5Str);
             if(saveFile.exists()) {
                 return;
             }else{

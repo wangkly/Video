@@ -19,6 +19,9 @@ import java.util.TimerTask;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import static com.wangky.video.util.Const.DOWNLOAD_FAIL;
+import static com.wangky.video.util.Const.DOWNLOAD_SUCCESS;
+
 public class MagnetActivity extends AppCompatActivity {
 
     private TextInputEditText mInput;
@@ -45,22 +48,21 @@ public class MagnetActivity extends AppCompatActivity {
         mAnalysisBtn = findViewById(R.id.analysis);
 
 
-        mAnalysisBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               String url = String.valueOf(mInput.getText());
+        mAnalysisBtn.setOnClickListener(v -> {
+           String url = String.valueOf(mInput.getText());
 
-               if(TextUtils.isEmpty(url)){
-                   Toast.makeText(MagnetActivity.this,"请填写链接",Toast.LENGTH_LONG).show();
-                   return;
-               }
+           if(TextUtils.isEmpty(url)){
+               Toast.makeText(MagnetActivity.this,"请填写链接",Toast.LENGTH_LONG).show();
+               return;
+           }
 
-               if(url.startsWith("magnet:")){
-                   downloadMagnet(url);
-               }
+           if(url.startsWith("magnet:")){
+               downloadMagnet(url);
+           }else{
+               Toast.makeText(MagnetActivity.this,"请填写正确的磁力链接",Toast.LENGTH_SHORT).show();
+           }
 
 
-            }
         });
 
     }
@@ -87,13 +89,17 @@ public class MagnetActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     XLTaskInfo taskInfo =  mTaskHelper.getTaskInfo(taskId);
-                    if(taskInfo.mTaskStatus == 2){
+                    if(taskInfo.mTaskStatus == DOWNLOAD_SUCCESS){
                         mTaskHelper.stopTask(taskId);
                         timer.cancel();
                         Intent intent = new Intent(MagnetActivity.this,TorrentDetailActivity.class);
                         intent.putExtra("type","torrent");
                         intent.putExtra("path",torrentPath);
                         startActivity(intent);
+                    }else if(taskInfo.mTaskStatus == DOWNLOAD_FAIL){
+                        Toast.makeText(MagnetActivity.this,"链接解析失败",Toast.LENGTH_SHORT).show();
+                        mTaskHelper.stopTask(taskId);
+                        timer.cancel();
                     }
 
                 }

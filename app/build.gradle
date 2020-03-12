@@ -20,6 +20,13 @@ android {
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }
+
+    packagingOptions {
+        pickFirst 'lib/armeabi-v7a/libijkffmpeg.so'
+        pickFirst 'lib/armeabi-v7a/libijkplayer.so'
+        pickFirst 'lib/armeabi-v7a/libijksdl.so'
+
+    }
 }
 
 dependencies {

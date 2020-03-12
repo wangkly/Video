@@ -33,6 +33,7 @@ import com.wangky.video.task.SaveThumbnailTask;
 import com.wangky.video.util.FileUtils;
 import com.wangky.video.util.Utils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -250,7 +251,12 @@ public class MainActivity extends AppCompatActivity {
                             startActivity(in);
                         }else{
 
-
+                            String title = new File(filePath).getName();
+                            Intent playIntent = new Intent(MainActivity.this, PlayActivity.class);
+                            playIntent.putExtra("LOrientation",false);
+                            playIntent.putExtra("data",filePath);
+                            playIntent.putExtra("title",title);
+                            startActivity(playIntent);
                         }
                     }
                     break;

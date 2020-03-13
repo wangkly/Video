@@ -12,7 +12,9 @@ package com.wangky.video.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -39,6 +41,8 @@ public class VLCActivity extends AppCompatActivity  implements IVLCVout.OnNewVid
     private SurfaceView mVideoSurface = null;
 
     private String vPath;
+    private FrameLayout mVideoSurfaceFrame = null;
+    private final Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +58,40 @@ public class VLCActivity extends AppCompatActivity  implements IVLCVout.OnNewVid
         mLibVLC = new LibVLC(this, args);
         mMediaPlayer = new MediaPlayer(mLibVLC);
         mVideoSurface = (SurfaceView) findViewById(R.id.video_surface);
+        mVideoSurfaceFrame = (FrameLayout) findViewById(R.id.video_surface_frame);
 
+        mVideoSurfaceFrame.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            private final Runnable mRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    updateVideoSurfaces();
+                }
+            };
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right,
+                                       int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
+                    mHandler.removeCallbacks(mRunnable);
+                    mHandler.post(mRunnable);
+                }
 
+        }
+        });
+
+    }
+
+    private void updateVideoSurfaces() {
+
+        int sw = getWindow().getDecorView().getWidth();
+        int sh = getWindow().getDecorView().getHeight();
+
+        // sanity check
+        if (sw * sh == 0) {
+
+            return;
+        }
+
+        mMediaPlayer.getVLCVout().setWindowSize(sw, sh);
     }
 
     @Override
@@ -72,6 +108,10 @@ public class VLCActivity extends AppCompatActivity  implements IVLCVout.OnNewVid
         final IVLCVout vlcVout = mMediaPlayer.getVLCVout();
         vlcVout.setVideoView(mVideoSurface);
         vlcVout.attachViews(this);
+
+//        vlcVout.setVideoSurface(mVideoSurface.getHolder().getSurface(),mVideoSurface.getHolder());
+//        vlcVout.attachViews();
+//        vlcVout.setWindowSize(mVideoSurface.getWidth(), mVideoSurface.getHeight());
 
         Media media = new Media(mLibVLC, vPath);
         mMediaPlayer.setMedia(media);

@@ -27,6 +27,7 @@ import com.wangky.video.activities.FilePickerActivity;
 import com.wangky.video.activities.MagnetActivity;
 import com.wangky.video.activities.PlayActivity;
 import com.wangky.video.activities.TorrentDetailActivity;
+import com.wangky.video.activities.VLCActivity;
 import com.wangky.video.adapter.VideoListAdapter;
 import com.wangky.video.beans.LocalVideoItem;
 import com.wangky.video.task.SaveThumbnailTask;
@@ -63,6 +64,17 @@ public class MainActivity extends AppCompatActivity {
             Boolean LOrientation = item.getWidth() > item.getHeight();//是否横屏播放
             String data = item.getData();
             String title = item.getTitle();
+
+
+            if(data.contains(".avi")){
+                Intent intent = new Intent(MainActivity.this, VLCActivity.class);
+                intent.putExtra("LOrientation",LOrientation);
+                intent.putExtra("data",data);
+                intent.putExtra("title",title);
+                startActivity(intent);
+                return;
+
+            }
 
             Intent intent = new Intent(MainActivity.this, PlayActivity.class);
             intent.putExtra("LOrientation",LOrientation);

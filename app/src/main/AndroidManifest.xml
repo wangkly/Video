@@ -63,6 +63,7 @@
         <!-- <activity android:name=".activities.WebViewActivity"></activity> -->
         <activity android:name=".activities.MagnetActivity" />
         <activity android:name=".activities.TorrentDetailActivity" />
+        <activity android:name=".activities.VLCActivity" android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

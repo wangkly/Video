@@ -4,7 +4,7 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.wangky.video"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -29,6 +29,12 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.0'
@@ -44,4 +50,5 @@ dependencies {
     implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.9'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation project(':thunder')
+    implementation(name: 'libvlc-3.0.0', ext: 'aar')
 }

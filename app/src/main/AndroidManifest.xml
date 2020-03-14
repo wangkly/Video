@@ -63,7 +63,9 @@
         <!-- <activity android:name=".activities.WebViewActivity"></activity> -->
         <activity android:name=".activities.MagnetActivity" />
         <activity android:name=".activities.TorrentDetailActivity" />
-        <activity android:name=".activities.VLCActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activities.VLCActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

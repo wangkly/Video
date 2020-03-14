@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.wangky.video.listeners.UserOperationListener;
 import com.wangky.video.util.DensityUtil;
 
 import androidx.core.view.GestureDetectorCompat;
@@ -161,21 +162,7 @@ public class MyPlayerView extends PlayerView {
 
 
 
-    /**
-     * 播放界面用户操作监听
-     *
-     */
-    public interface UserOperationListener{
 
-        void onVideoVolumeChange(float percent);
-
-        void onViewBrightnessChange(float percent);
-
-        void onVideoProgressChange(int type ,float percent);
-
-        void onOperationEnd();
-
-    }
 
 
 

@@ -32,8 +32,10 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.wangky.video.MainActivity;
 import com.wangky.video.MyPlayerView;
 import com.wangky.video.R;
+import com.wangky.video.listeners.UserOperationListener;
 import com.wangky.video.view.OperationDialogFragment;
 
 import java.text.SimpleDateFormat;
@@ -45,7 +47,7 @@ import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MOD
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM;
 
-public class PlayActivity extends AppCompatActivity implements MyPlayerView.UserOperationListener ,OperationDialogFragment.OnOperationListener{
+public class PlayActivity extends AppCompatActivity implements UserOperationListener,OperationDialogFragment.OnOperationListener{
 
     private final String TAG = "PlayActivity.class";
 
@@ -90,6 +92,9 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
 
     private Boolean mUpdateTime = false;
 
+    private String vPath;
+    private String vTitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(TAG,"onCreate");
@@ -118,16 +123,8 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         Intent intent = getIntent();
         String data = intent.getStringExtra("data");
         String title = intent.getStringExtra("title");
-//        Boolean orientation = intent.getBooleanExtra("LOrientation",false);
-//        if(orientation){
-//            //横屏
-//            mLOrientation = true;
-//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//        }else {
-//            mLOrientation = false;
-//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//        }
-
+        vPath = data;
+        vTitle = title;
         playerView = findViewById(R.id.player);
         player = ExoPlayerFactory.newSimpleInstance(this);
         player.setSeekParameters(SeekParameters.NEXT_SYNC);
@@ -295,8 +292,14 @@ public class PlayActivity extends AppCompatActivity implements MyPlayerView.User
         @Override
         public void onPlayerError(ExoPlaybackException error) {
             Log.i(TAG,"error===>"+error.getMessage());
-            Toast.makeText(PlayActivity.this,"出错了。。。",Toast.LENGTH_SHORT).show();
+//            Toast.makeText(PlayActivity.this,"出错了。。。",Toast.LENGTH_SHORT).show();
 
+            Intent intent = new Intent(PlayActivity.this, VLCActivity.class);
+            intent.putExtra("LOrientation",false);
+            intent.putExtra("data",vPath);
+            intent.putExtra("title",vTitle);
+            startActivity(intent);
+            finish();
         }
     }
 

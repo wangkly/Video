@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             String title = item.getTitle();
 
 
-            if(data.contains(".avi")){
+            if(data.contains(".avi") || data.contains(".rm")||data.contains(".m2ts")){
                 Intent intent = new Intent(MainActivity.this, VLCActivity.class);
                 intent.putExtra("LOrientation",LOrientation);
                 intent.putExtra("data",data);

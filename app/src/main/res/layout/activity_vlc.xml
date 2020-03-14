@@ -1,17 +1,15 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/video_surface_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
     android:keepScreenOn="true"
-    android:foregroundGravity="clip_horizontal|clip_vertical"
     android:background="@android:color/background_dark">
 
-
-        <SurfaceView
-            android:id="@+id/video_surface"
+        <com.wangky.video.vlc.VLCVideoLayout
+            android:id="@+id/video_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="false"/>
+
+    <include layout="@layout/video_control" />
 
 </FrameLayout>

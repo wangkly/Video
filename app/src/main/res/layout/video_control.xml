@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vlc_controller"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:visibility="gone">
 
     <LinearLayout
         android:id="@+id/titleBar"
@@ -30,6 +32,7 @@
             android:focusable="true"
             android:marqueeRepeatLimit="-1"
             android:focusableInTouchMode="true"
+            android:textColor="@color/white"
             android:gravity="start|center_vertical"
             android:textSize="18sp"/>
 
@@ -215,7 +218,7 @@
                     android:includeFontPadding="false"
                     android:textColor="#FFBEBEBE"/>
 
-                <View android:id="@id/exo_progress_placeholder"
+                <SeekBar android:id="@+id/vlc_progress"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="26dp"/>

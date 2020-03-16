@@ -14,4 +14,6 @@ public interface UserOperationListener{
 
     void onOperationEnd();
 
+    void onOperationStart();
+
 }

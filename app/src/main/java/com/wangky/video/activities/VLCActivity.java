@@ -16,17 +16,24 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.wangky.video.MyPlayerView;
 import com.wangky.video.R;
 import com.wangky.video.listeners.UserOperationListener;
+import com.wangky.video.util.DateUtil;
 import com.wangky.video.vlc.VLCVideoLayout;
 import com.wangky.video.vlc.VideoHelper;
 
@@ -37,9 +44,6 @@ import org.videolan.libvlc.MediaPlayer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.TimeZone;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 public class VLCActivity extends AppCompatActivity implements UserOperationListener,View.OnClickListener {
     private static final boolean USE_TEXTURE_VIEW = false;
@@ -68,8 +72,14 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
     private TextView mCurrentTime;//用于显示当前时间
     private ImageButton mMoreOperation;//更多操作
 
+    private FrameLayout mVlcController;
     private ImageButton mVlcPlay;
     private ImageButton mVlcPause;
+
+    private TextView mVlcPosition;
+    private TextView mVlcDuration;
+    private SeekBar mProgress;
+
 
     //是否横屏播放
     private Boolean mLOrientation =false ;
@@ -121,8 +131,13 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
         mLoading = findViewById(R.id.loading);
         mCurrentTime = findViewById(R.id.current_time);
         mMoreOperation = findViewById(R.id.more_operation);
+
+        mVlcController = findViewById(R.id.vlc_controller);
         mVlcPlay = findViewById(R.id.vlc_play);
         mVlcPause = findViewById(R.id.vlc_pause);
+        mVlcPosition = findViewById(R.id.vlc_position);
+        mVlcDuration = findViewById(R.id.vlc_duration);
+        mProgress = findViewById(R.id.vlc_progress);
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -165,8 +180,48 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
             throw new RuntimeException("Invalid asset folder");
         }
         mMediaPlayer.play();
-        mVlcPlay.setVisibility(View.GONE);
+
+        initPlayerStatus();
     }
+
+    public void initPlayerStatus(){
+        mVlcPlay.setVisibility(View.GONE);
+        mVlcPosition.setText("00:00");
+
+        mMediaPlayer.setEventListener(new MediaPlayer.EventListener() {
+            @Override
+            public void onEvent(MediaPlayer.Event event) {
+
+            }
+        });
+
+
+        mVlcDuration.setText(DateUtil.formatTime(mMediaPlayer.getLength()));
+        mProgress.setMax((int) mMediaPlayer.getLength());
+
+        mProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(fromUser){
+                    System.out.println(
+                            mMediaPlayer.getLength()
+                    );
+                }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+    }
+
+
 
     @Override
     protected void onStop() {
@@ -187,6 +242,7 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
     public void attachViews(MediaPlayer player,@NonNull VLCVideoLayout surfaceFrame, boolean subtitles, boolean textureView) {
         mVideoHelper = new VideoHelper(player, surfaceFrame, subtitles, textureView);
         mVideoHelper.attachViews();
+
     }
 
     /**
@@ -282,6 +338,8 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
         volume_view.setVisibility(View.GONE);
         progress_tip.setVisibility(View.GONE);
 
+        new Handler().postDelayed(() -> mVlcController.setVisibility(View.GONE),2000);
+
     }
 
 
@@ -335,7 +393,7 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
     public void onVideoProgressChange(int type, float percent) {
 
         if(progressChange == -1){
-            current = (long) mMediaPlayer.getPosition();
+            current =  mMediaPlayer.getTime();
             progress_tip.setVisibility(View.VISIBLE);
             progressChange = 1;
         }
@@ -352,7 +410,7 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
                 current =duration;
             }
             progress_percent.setText(formatProgress(current,duration));
-            mMediaPlayer.setPosition(current);
+            mMediaPlayer.setTime(current);
             progress_icon.setImageResource(R.drawable.ic_forward);
             mMediaPlayer.play();
         }else if(type == MyPlayerView.PROGRESS_BACKWARD){
@@ -361,7 +419,7 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
             if(current <= 0){
                 current =0;
             }
-            mMediaPlayer.setPosition(current);
+            mMediaPlayer.setTime(current);
             mMediaPlayer.play();
             progress_percent.setText(formatProgress(current,duration));
             progress_icon.setImageResource(R.drawable.ic_backward);
@@ -374,7 +432,13 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
         this.endGesture();
     }
 
-    public String formatProgress(long current,long duration){
+
+    @Override
+    public void onOperationStart() {
+        mVlcController.setVisibility(View.VISIBLE);
+    }
+
+    public String formatProgress(long current, long duration){
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
         String hms = formatter.format(current);

@@ -292,14 +292,14 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         @Override
         public void onPlayerError(ExoPlaybackException error) {
             Log.i(TAG,"error===>"+error.getMessage());
-//            Toast.makeText(PlayActivity.this,"出错了。。。",Toast.LENGTH_SHORT).show();
+            Toast.makeText(PlayActivity.this,"出错了。。。",Toast.LENGTH_SHORT).show();
 
-            Intent intent = new Intent(PlayActivity.this, VLCActivity.class);
-            intent.putExtra("LOrientation",false);
-            intent.putExtra("data",vPath);
-            intent.putExtra("title",vTitle);
-            startActivity(intent);
-            finish();
+//            Intent intent = new Intent(PlayActivity.this, VLCActivity.class);
+//            intent.putExtra("LOrientation",false);
+//            intent.putExtra("data",vPath);
+//            intent.putExtra("title",vTitle);
+//            startActivity(intent);
+//            finish();
         }
     }
 
@@ -387,9 +387,12 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         this.endGesture();
     }
 
+    @Override
+    public void onOperationStart() {
 
+    }
 
-    public String formatProgress(long current,long duration){
+    public String formatProgress(long current, long duration){
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
         String hms = formatter.format(current);

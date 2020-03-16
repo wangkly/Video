@@ -70,8 +70,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
            Glide.with(mContext).load(file).into(holder.image);
 
         }else {
-            Bitmap bitmap = this.getVideoThumbnailIfNull(item.getData());
-            Glide.with(mContext).load(bitmap).into(holder.image);
+//            Bitmap bitmap = this.getVideoThumbnailIfNull(item.getData());
+//            Glide.with(mContext).load(bitmap).into(holder.image);
         }
 
         holder.title.setText(item.getTitle());

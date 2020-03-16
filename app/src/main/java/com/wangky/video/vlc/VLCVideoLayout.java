@@ -120,6 +120,7 @@ public class VLCVideoLayout extends FrameLayout {
         public boolean onDown(MotionEvent e) {
             Log.d("-------->playing","onDown");
             firstScroll = true;
+            mOptListener.onOperationStart();
             return true;
         }
     };

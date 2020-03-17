@@ -45,6 +45,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.TimeZone;
 
+import static org.videolan.libvlc.MediaPlayer.Event.TimeChanged;
+
 public class VLCActivity extends AppCompatActivity implements UserOperationListener,View.OnClickListener {
     private static final boolean USE_TEXTURE_VIEW = false;
     private static final boolean ENABLE_SUBTITLES = true;
@@ -188,26 +190,27 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
         mVlcPlay.setVisibility(View.GONE);
         mVlcPosition.setText("00:00");
 
-        mMediaPlayer.setEventListener(new MediaPlayer.EventListener() {
-            @Override
-            public void onEvent(MediaPlayer.Event event) {
-
-            }
+        mMediaPlayer.setEventListener(event -> {
+           if(event.type == TimeChanged){
+               runOnUiThread(()->{
+                   mVlcPosition.setText(DateUtil.formatTime(mMediaPlayer.getTime()));
+                   mProgress.setProgress((int) mMediaPlayer.getTime());
+               });
+           }
         });
 
+        new Handler().postDelayed(() -> {
+            mVlcDuration.setText(DateUtil.formatTime(mMediaPlayer.getLength()));
+            mProgress.setMax((int) mMediaPlayer.getLength());
 
-        mVlcDuration.setText(DateUtil.formatTime(mMediaPlayer.getLength()));
-        mProgress.setMax((int) mMediaPlayer.getLength());
+        },1000);
 
         mProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(fromUser){
-                    System.out.println(
-                            mMediaPlayer.getLength()
-                    );
+                    mMediaPlayer.setTime(progress);
                 }
-
             }
 
             @Override

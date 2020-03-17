@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        int pageCount = 10;
+        int pageCount = 20;
         int pageNo = paths.size() / pageCount;
         int lastPageCount = paths.size() % pageCount;
         if(lastPageCount == 0){

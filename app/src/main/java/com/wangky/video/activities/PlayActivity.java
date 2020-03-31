@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -32,7 +31,6 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.wangky.video.MainActivity;
 import com.wangky.video.MyPlayerView;
 import com.wangky.video.R;
 import com.wangky.video.listeners.UserOperationListener;
@@ -471,7 +469,11 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
                     playerView.setResizeMode(RESIZE_MODE_FIT);
                     break;
                 case 1:
-                    playerView.setResizeMode(RESIZE_MODE_FIXED_WIDTH);
+                    if(mLOrientation){//横屏
+                        playerView.setResizeMode(RESIZE_MODE_FIXED_WIDTH);
+                    }else {
+                        playerView.setResizeMode(RESIZE_MODE_FIXED_HEIGHT);
+                    }
                     break;
                 case 2:
                     playerView.setResizeMode(RESIZE_MODE_FIXED_HEIGHT);

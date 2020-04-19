@@ -85,10 +85,8 @@ public class OperationDialogFragment extends DialogFragment {
         }
 
         RadioButton rmTarget = mScaleGroup.findViewById(R.id.scale_default) ;
-        if(rm == 1){
-            rmTarget = mScaleGroup.findViewById(R.id.scale_fit_height);
-        }else if(rm == 2){
-            rmTarget = mScaleGroup.findViewById(R.id.scale_fit_with_width);
+        if(rm == 1||rm == 2){
+            rmTarget = mScaleGroup.findViewById(R.id.scale_fit);
         }else if(rm == 3){
             rmTarget = mScaleGroup.findViewById(R.id.scale_fit_fill);
         }else if(rm == 4){

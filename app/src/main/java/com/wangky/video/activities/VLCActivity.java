@@ -34,6 +34,7 @@ import com.wangky.video.MyPlayerView;
 import com.wangky.video.R;
 import com.wangky.video.listeners.UserOperationListener;
 import com.wangky.video.util.DateUtil;
+import com.wangky.video.view.OperationDialogFragment;
 import com.wangky.video.vlc.VLCVideoLayout;
 import com.wangky.video.vlc.VideoHelper;
 
@@ -47,7 +48,7 @@ import java.util.TimeZone;
 
 import static org.videolan.libvlc.MediaPlayer.Event.TimeChanged;
 
-public class VLCActivity extends AppCompatActivity implements UserOperationListener,View.OnClickListener {
+public class VLCActivity extends AppCompatActivity implements UserOperationListener,View.OnClickListener ,OperationDialogFragment.OnOperationListener{
     private static final boolean USE_TEXTURE_VIEW = false;
     private static final boolean ENABLE_SUBTITLES = true;
 
@@ -151,6 +152,8 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
         mToggle.setOnClickListener(this);
         mVlcPlay.setOnClickListener(this);
         mVlcPause.setOnClickListener(this);
+
+        mMoreOperation.setOnClickListener(this);
 
         this.updateCurrentTime();
     }
@@ -318,6 +321,27 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
                 }
                 break;
 
+            case R.id.more_operation:
+                OperationDialogFragment fragment = new OperationDialogFragment();
+                float speed = mMediaPlayer.getRate();
+                int resizeMode = 0;
+                VideoHelper.ScaleType scale = getVideoScale();
+                if(scale.equals(VideoHelper.ScaleType.SURFACE_FIT_SCREEN)){
+                    resizeMode = 4;
+                }else if(scale.equals(VideoHelper.ScaleType.SURFACE_FILL)){
+                    resizeMode = 3;
+                }else if(scale.equals(VideoHelper.ScaleType.SURFACE_ORIGINAL)){
+                    resizeMode = 1;
+                }
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("orientation",mLOrientation);
+                bundle.putSerializable("speed",speed);
+                bundle.putSerializable("resizeMode",resizeMode);
+                fragment.setArguments(bundle);
+                fragment.show(getSupportFragmentManager(),"operationFragment");
+
+                break;
+
             default:
 
                 break;
@@ -470,4 +494,26 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
     }
 
 
+    /**
+     * OperationDialogFragment.OnOperationListener
+     * @param speed
+     */
+    @Override
+    public void onPlaySpeedChange(float speed) {
+        mMediaPlayer.setRate(speed);
+    }
+
+    @Override
+    public void onViewScaleChange(int scale) {
+        if(scale == 0){
+            setVideoScale(VideoHelper.ScaleType.SURFACE_BEST_FIT);
+        }else if(scale == 4){//裁剪
+            setVideoScale(VideoHelper.ScaleType.SURFACE_FIT_SCREEN);
+        }else if(scale == 3){//拉伸
+            setVideoScale(VideoHelper.ScaleType.SURFACE_FILL);
+        }else {
+            setVideoScale(VideoHelper.ScaleType.SURFACE_ORIGINAL);
+        }
+
+    }
 }

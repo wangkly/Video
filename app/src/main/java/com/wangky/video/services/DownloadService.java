@@ -6,8 +6,11 @@ import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.wangky.video.event.TaskEvent;
 import com.wangky.video.task.DownloadTask;
 import com.wangky.video.util.DownUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class DownloadService extends Service {
     public DownloadService() {
@@ -24,6 +27,8 @@ public class DownloadService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(!DownUtil.getInstance().isIsLoopDown()){//当前是停止状态，需要启动
             DownUtil.getInstance().setIsLoopDown(true);
+            TaskEvent event = new TaskEvent("更新下载进度");
+            EventBus.getDefault().post(event);
             new DownloadTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 

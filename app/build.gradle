@@ -51,4 +51,5 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation project(':thunder')
     implementation(name: 'libvlc-3.0.0', ext: 'aar')
+    implementation 'org.greenrobot:eventbus:3.2.0'
 }

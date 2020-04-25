@@ -27,6 +27,7 @@ import com.wangky.video.activities.TorrentDetailActivity;
 import com.wangky.video.activities.VLCActivity;
 import com.wangky.video.adapter.VideoListAdapter;
 import com.wangky.video.beans.LocalVideoItem;
+import com.wangky.video.enums.MessageType;
 import com.wangky.video.event.TaskEvent;
 import com.wangky.video.task.SaveThumbnailTask;
 import com.wangky.video.util.FileUtils;
@@ -334,7 +335,9 @@ public class MainActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.O)
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMessage(TaskEvent event){
-        String message = event.getMessage();
+        MessageType message = event.getMessage();
+
+
         String channelId = "my_channel_01";
 
         NotificationChannel mChannel = new NotificationChannel(channelId, "my_channel", NotificationManager.IMPORTANCE_LOW);
@@ -344,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
         Notification notification = new NotificationCompat
                 .Builder(getApplicationContext(),channelId)
                 .setContentTitle("通知")
-                .setContentText(message)
+                .setContentText(message.name())
                 .setSmallIcon(R.drawable.ic_download)
                 .setWhen(System.currentTimeMillis())
                 .build();

@@ -1,21 +1,24 @@
 package com.wangky.video.activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 
 import com.wangky.video.R;
 import com.wangky.video.adapter.DownloadListAdapter;
 import com.wangky.video.beans.DownloadTaskEntity;
 import com.wangky.video.beans.TorrentInfoEntity;
+import com.wangky.video.enums.MessageType;
+import com.wangky.video.event.TaskEvent;
 import com.wangky.video.model.DownLoadModel;
 import com.wangky.video.model.DownLoadModelImp;
 import com.wangky.video.services.DownloadService;
 import com.wangky.video.util.Const;
 import com.wangky.video.util.DownUtil;
 import com.xunlei.downloadlib.XLTaskHelper;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,7 +42,7 @@ public class DownloadActivity extends AppCompatActivity {
 
     List<DownloadTaskEntity> tasks = new ArrayList<>();
 
-    private UpDateUIReceiver receiver;
+//    private UpDateUIReceiver receiver;
     private LocalBroadcastManager localBroadcastManager;
 
 
@@ -117,10 +120,10 @@ public class DownloadActivity extends AppCompatActivity {
         downloadList.setLayoutManager(layoutManager);
 
 
-        receiver = new UpDateUIReceiver();
-        IntentFilter intentFilter = new IntentFilter(Const.UPDATE_DOWNLOAD_UI);
-        localBroadcastManager= LocalBroadcastManager.getInstance(this);
-        localBroadcastManager.registerReceiver(receiver,intentFilter);
+//        receiver = new UpDateUIReceiver();
+//        IntentFilter intentFilter = new IntentFilter(Const.UPDATE_DOWNLOAD_UI);
+//        localBroadcastManager= LocalBroadcastManager.getInstance(this);
+//        localBroadcastManager.registerReceiver(receiver,intentFilter);
 
         //启动service更新UI
         Intent intent = new Intent(DownloadActivity.this, DownloadService.class);
@@ -139,23 +142,51 @@ public class DownloadActivity extends AppCompatActivity {
 
 
 
-    class UpDateUIReceiver extends BroadcastReceiver{
-        @Override
-        public void onReceive(Context context, Intent intent) {
-             List<DownloadTaskEntity> tasks = (List<DownloadTaskEntity>) intent.getSerializableExtra("data");
-             refreshData(tasks);
-        }
-    }
+//    class UpDateUIReceiver extends BroadcastReceiver{
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//             List<DownloadTaskEntity> tasks = (List<DownloadTaskEntity>) intent.getSerializableExtra("data");
+//             refreshData(tasks);
+//        }
+//    }
 
 
     @Override
     protected void onDestroy() {
-        localBroadcastManager.unregisterReceiver(receiver);
+//        localBroadcastManager.unregisterReceiver(receiver);
         //停止更新页面
         DownUtil.getInstance().setIsLoopDown(false);
         Intent intent = new Intent(DownloadActivity.this, DownloadService.class);
         stopService(intent);
         super.onDestroy();
     }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    /***
+     * 更新下载进度
+     * @param event
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateDownloadTaskUI(TaskEvent event){
+        if(event.getMessage().equals(MessageType.UPDATE_UI)){
+            List<DownloadTaskEntity> tasks = event.getTasks();
+            refreshData(tasks);
+        }else if(event.getMessage().equals(MessageType.STOP_TASK)){
+            refreshData(new ArrayList<>());
+        }
+    }
+
 
 }

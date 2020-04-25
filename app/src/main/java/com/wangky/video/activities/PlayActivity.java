@@ -34,7 +34,10 @@ import com.google.android.exoplayer2.util.Util;
 import com.wangky.video.MyPlayerView;
 import com.wangky.video.R;
 import com.wangky.video.listeners.UserOperationListener;
+import com.wangky.video.util.FileUtils;
 import com.wangky.video.view.OperationDialogFragment;
+import com.xunlei.downloadlib.XLTaskHelper;
+import com.xunlei.downloadlib.parameter.XLTaskInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -49,11 +52,12 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
 
     private final String TAG = "PlayActivity.class";
 
-
+    private XLTaskHelper mTaskHelper;
     private SimpleExoPlayer player;
     private ImageButton mBack;
     private TextView mTitle;
     private ImageButton mToggle;
+    private TextView mCurrentSpeed;//用于显示当前时间
     private TextView mCurrentTime;//用于显示当前时间
     private ImageButton mMoreOperation;//更多操作
     //是否横屏播放
@@ -89,14 +93,18 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
     private PlayerEventListener eventListener;
 
     private Boolean mUpdateTime = false;
+    private Boolean mUpdateSpeed = false;
 
     private String vPath;
     private String vTitle;
+
+    private long taskId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
+        mTaskHelper= XLTaskHelper.instance(this);
         //隐藏title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //设置全屏
@@ -117,10 +125,12 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         mToggle = findViewById(R.id.exo_toggle);
         mLoading = findViewById(R.id.loading);
         mCurrentTime = findViewById(R.id.current_time);
+        mCurrentSpeed = findViewById(R.id.current_speed);
         mMoreOperation = findViewById(R.id.more_operation);
         Intent intent = getIntent();
         String data = intent.getStringExtra("data");
         String title = intent.getStringExtra("title");
+        taskId = intent.getLongExtra("taskId",0);
         vPath = data;
         vTitle = title;
         playerView = findViewById(R.id.player);
@@ -186,11 +196,20 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         mUpdateTime = true;
         this.updateCurrentTime();
 
+        if(taskId != 0){
+            mUpdateSpeed = true;
+            this.updateCurrentSpeed();
+
+        }
+
     }
+
+
 
     @Override
     protected void onDestroy() {
         mUpdateTime = false;
+        mUpdateSpeed =false;
         player.release();
         super.onDestroy();
     }
@@ -402,32 +421,43 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
 
 
     public void updateCurrentTime(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (mUpdateTime){
-                    //延迟两秒
-                    try {
-                        Thread.sleep( 1000 );
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+        new Thread(() -> {
+            while (mUpdateTime){
+                //延迟两秒
+                try {
+                    Thread.sleep( 1000 );
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-                    long currentTimestamp = System.currentTimeMillis();
-                    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-                    String time = formatter.format(currentTimestamp);
+                long currentTimestamp = System.currentTimeMillis();
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+                String time = formatter.format(currentTimestamp);
 //                    Date currentTime =Calendar.getInstance().getTime();
 //                    String time = formatter.format(currentTime);
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mCurrentTime.setText(time);
-                        }
-                    });
-                }
+                runOnUiThread(() -> mCurrentTime.setText(time));
             }
         }).start();
+    }
+
+    /**
+     * 更新下载进度
+     */
+    private void updateCurrentSpeed() {
+        new Thread(() -> {
+            while (mUpdateSpeed){
+                //延迟两秒
+                try {
+                    Thread.sleep( 1000 );
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                XLTaskInfo taskInfo = mTaskHelper.getTaskInfo(taskId);
+                runOnUiThread(() -> mCurrentSpeed.setText(FileUtils.downloadSpeed(taskInfo.mDownloadSpeed)));
+            }
+        }).start();
+
     }
 
 

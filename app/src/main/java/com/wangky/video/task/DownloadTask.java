@@ -22,4 +22,13 @@ public class DownloadTask extends AsyncTask<Void,Void,Void> {
 
         return null;
     }
+
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        //任务结束 停止service 更新UI
+
+
+
+    }
 }

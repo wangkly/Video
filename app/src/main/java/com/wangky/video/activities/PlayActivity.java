@@ -198,6 +198,7 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
 
         if(taskId != 0){
             mUpdateSpeed = true;
+            mCurrentSpeed.setVisibility(View.VISIBLE);
             this.updateCurrentSpeed();
 
         }

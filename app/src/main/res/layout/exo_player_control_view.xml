@@ -24,7 +24,7 @@
 
         <TextView
             android:id="@+id/m_title"
-            android:layout_width="234dp"
+            android:layout_width="200dp"
             android:layout_height="match_parent"
             android:singleLine="true"
             android:ellipsize="marquee"
@@ -41,6 +41,7 @@
 
             <TextView
                 android:id="@+id/current_speed"
+                android:visibility="gone"
                 android:text="speed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

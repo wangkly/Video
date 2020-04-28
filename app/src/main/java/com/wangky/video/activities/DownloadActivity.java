@@ -90,6 +90,7 @@ public class DownloadActivity extends AppCompatActivity {
             Intent intent = new Intent(DownloadActivity.this,SubTaskActivity.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable("subTasks", (Serializable) subs);
+            bundle.putLong("taskId",task.getTaskId());
             intent.putExtras(bundle);
             startActivity(intent);
 

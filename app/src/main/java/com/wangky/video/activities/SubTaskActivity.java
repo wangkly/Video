@@ -25,6 +25,8 @@ public class SubTaskActivity extends AppCompatActivity {
 
     private XLTaskHelper mTaskHelper;
 
+    private long mTaskId = 0;
+
 
     private View.OnClickListener mListener = new View.OnClickListener() {
         @Override
@@ -38,6 +40,7 @@ public class SubTaskActivity extends AppCompatActivity {
             intent.putExtra("LOrientation",true);
             intent.putExtra("data",localUrl);
             intent.putExtra("title",file.getmFileName());
+            intent.putExtra("taskId",mTaskId);
             startActivity(intent);
 
         }
@@ -53,6 +56,7 @@ public class SubTaskActivity extends AppCompatActivity {
         mTaskHelper = XLTaskHelper.instance(this);
 
         Intent intent = getIntent();
+        mTaskId = intent.getLongExtra("taskId",0);
 
         mList = (List<TorrentInfoEntity>) intent.getSerializableExtra("subTasks");
 

@@ -33,7 +33,10 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.wangky.video.MyPlayerView;
 import com.wangky.video.R;
+import com.wangky.video.beans.DownloadTaskEntity;
 import com.wangky.video.listeners.UserOperationListener;
+import com.wangky.video.model.DownLoadModel;
+import com.wangky.video.model.DownLoadModelImp;
 import com.wangky.video.util.FileUtils;
 import com.wangky.video.view.OperationDialogFragment;
 import com.xunlei.downloadlib.XLTaskHelper;
@@ -99,10 +102,15 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
     private String vTitle;
 
     private long taskId;
+    private String hash;
+
+    //当前时间戳
+    private long mCurrentTimeStamp = 0;
+
+    private DownLoadModel downLoadModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
         mTaskHelper= XLTaskHelper.instance(this);
         //隐藏title
@@ -112,6 +120,7 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         setContentView(R.layout.activity_play);
         //播放器事件监听
         eventListener = new PlayerEventListener();
+        downLoadModel=new DownLoadModelImp();
 
         brightness = findViewById(R.id.brightness);
         volume_view = findViewById(R.id.volume);
@@ -131,6 +140,7 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         String data = intent.getStringExtra("data");
         String title = intent.getStringExtra("title");
         taskId = intent.getLongExtra("taskId",0);
+        hash = intent.getStringExtra("hash");
         vPath = data;
         vTitle = title;
         playerView = findViewById(R.id.player);
@@ -455,9 +465,28 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
                     e.printStackTrace();
                 }
                 XLTaskInfo taskInfo = mTaskHelper.getTaskInfo(taskId);
+                Log.i("mTaskStatus ==>",String.valueOf(taskInfo.mTaskStatus));
+                Log.i("mDownloadSpeed ==>",String.valueOf(taskInfo.mDownloadSpeed));
+                if((taskInfo.mDownloadSpeed ==0 && taskInfo.mTaskStatus !=0) || taskInfo.mTaskStatus == 3 || taskInfo.mTaskStatus == 4){
+                    restartDownloadTask();
+                }
                 runOnUiThread(() -> mCurrentSpeed.setText(FileUtils.downloadSpeed(taskInfo.mDownloadSpeed)));
             }
         }).start();
+
+    }
+
+
+    /**
+     * 重启下载任务
+     */
+    public void restartDownloadTask(){
+        if(System.currentTimeMillis() - mCurrentTimeStamp > 30 * 1000){//30秒重试一次
+            Log.i("task ==>","尝试重启");
+            DownloadTaskEntity task = downLoadModel.restartDownloadTask(hash);
+            taskId = task.getTaskId();
+            mCurrentTimeStamp = System.currentTimeMillis();
+        }
 
     }
 

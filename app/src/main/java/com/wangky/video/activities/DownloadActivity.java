@@ -14,7 +14,6 @@ import com.wangky.video.model.DownLoadModelImp;
 import com.wangky.video.services.DownloadService;
 import com.wangky.video.util.Const;
 import com.wangky.video.util.DownUtil;
-import com.xunlei.downloadlib.XLTaskHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -26,13 +25,10 @@ import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class DownloadActivity extends AppCompatActivity {
-
-    private XLTaskHelper mTaskHelper;
 
     private RecyclerView downloadList;
 
@@ -41,9 +37,6 @@ public class DownloadActivity extends AppCompatActivity {
     private DownLoadModel downLoadModel;
 
     List<DownloadTaskEntity> tasks = new ArrayList<>();
-
-//    private UpDateUIReceiver receiver;
-    private LocalBroadcastManager localBroadcastManager;
 
 
     private DownloadListAdapter.OnOperationBtnClick mClickListener = new DownloadListAdapter.OnOperationBtnClick() {
@@ -91,6 +84,7 @@ public class DownloadActivity extends AppCompatActivity {
             Bundle bundle = new Bundle();
             bundle.putSerializable("subTasks", (Serializable) subs);
             bundle.putLong("taskId",task.getTaskId());
+            bundle.putString("hash",task.getHash());
             intent.putExtras(bundle);
             startActivity(intent);
 
@@ -105,12 +99,9 @@ public class DownloadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
         setTitle("下载列表");
-        mTaskHelper= XLTaskHelper.instance(this);
         downLoadModel = new DownLoadModelImp();
 
         downloadList = findViewById(R.id.downloadList);
-
-//        DBTools.getInstance().findALLTask();
 
         downloadListAdapter = new DownloadListAdapter(DownloadActivity.this,tasks,mClickListener);
 
@@ -119,12 +110,6 @@ public class DownloadActivity extends AppCompatActivity {
         downloadList.setAdapter(downloadListAdapter);
 
         downloadList.setLayoutManager(layoutManager);
-
-
-//        receiver = new UpDateUIReceiver();
-//        IntentFilter intentFilter = new IntentFilter(Const.UPDATE_DOWNLOAD_UI);
-//        localBroadcastManager= LocalBroadcastManager.getInstance(this);
-//        localBroadcastManager.registerReceiver(receiver,intentFilter);
 
         //启动service更新UI
         Intent intent = new Intent(DownloadActivity.this, DownloadService.class);
@@ -143,18 +128,9 @@ public class DownloadActivity extends AppCompatActivity {
 
 
 
-//    class UpDateUIReceiver extends BroadcastReceiver{
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//             List<DownloadTaskEntity> tasks = (List<DownloadTaskEntity>) intent.getSerializableExtra("data");
-//             refreshData(tasks);
-//        }
-//    }
-
 
     @Override
     protected void onDestroy() {
-//        localBroadcastManager.unregisterReceiver(receiver);
         //停止更新页面
         DownUtil.getInstance().setIsLoopDown(false);
         Intent intent = new Intent(DownloadActivity.this, DownloadService.class);

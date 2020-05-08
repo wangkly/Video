@@ -69,6 +69,7 @@ public class TorrentDetailActivity extends AppCompatActivity {
                     String localUrl = mTaskHelper.getLocalUrl(path);
                     Intent intent = new Intent(TorrentDetailActivity.this, PlayActivity.class);
                     intent.putExtra("taskId",task.getTaskId());//用来查询下载速度
+                    intent.putExtra("hash",task.getHash());//用来查找DownloadTaskEntity
                     intent.putExtra("LOrientation",true);
                     intent.putExtra("data",localUrl);
                     intent.putExtra("title",target.getmFileName());

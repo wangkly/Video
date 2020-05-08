@@ -71,13 +71,6 @@ public class UpdateUI {
             TaskEvent event =  new TaskEvent(MessageType.UPDATE_UI,tasks);
             EventBus.getDefault().post(event);
 
-            //通知activity 更新
-//            Intent intent = new Intent(Const.UPDATE_DOWNLOAD_UI);
-//            Bundle bundle = new Bundle();
-//            bundle.putSerializable("data", (Serializable) tasks);
-//            intent.putExtras(bundle);
-//            LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(intent);
-
         }else{
             //空的下载列表应该停止更新
             TaskEvent event =  new TaskEvent(MessageType.STOP_TASK);

@@ -235,6 +235,18 @@ public class DownLoadModelImp implements DownLoadModel {
         return true;
     }
 
+
+    @Override
+    public DownloadTaskEntity restartDownloadTask(String hash) {
+        DownloadTaskEntity already = DBTools.getInstance().findByHash(hash);
+        if(null != already){
+            XLTaskHelper.instance(MyApplication.getInstance()).stopTask(already.getTaskId());
+        }
+        //重新启动
+        startTask(already);
+        return already;
+    }
+
     @Override
     public Boolean stopTask(DownloadTaskEntity task) {
         try {

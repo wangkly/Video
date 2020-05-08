@@ -20,4 +20,6 @@ public interface DownLoadModel {
     List<TorrentInfoEntity> getTorrentInfo(String btpath);
 
     String getLocalUrl(String filePath);
+
+    DownloadTaskEntity restartDownloadTask(String hash);
 }

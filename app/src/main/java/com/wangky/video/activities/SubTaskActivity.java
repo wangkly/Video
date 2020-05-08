@@ -26,6 +26,7 @@ public class SubTaskActivity extends AppCompatActivity {
     private XLTaskHelper mTaskHelper;
 
     private long mTaskId = 0;
+    private String hash;
 
 
     private View.OnClickListener mListener = new View.OnClickListener() {
@@ -41,6 +42,7 @@ public class SubTaskActivity extends AppCompatActivity {
             intent.putExtra("data",localUrl);
             intent.putExtra("title",file.getmFileName());
             intent.putExtra("taskId",mTaskId);
+            intent.putExtra("hash",hash);
             startActivity(intent);
 
         }
@@ -57,7 +59,7 @@ public class SubTaskActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mTaskId = intent.getLongExtra("taskId",0);
-
+        hash = intent.getStringExtra("hash");
         mList = (List<TorrentInfoEntity>) intent.getSerializableExtra("subTasks");
 
         adapter = new TorrentTaskListAdapter(this,mList,mListener);

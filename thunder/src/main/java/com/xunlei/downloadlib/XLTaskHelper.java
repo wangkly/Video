@@ -297,6 +297,14 @@ public class XLTaskHelper {
     }
 
     /**
+     * 重启任务
+     */
+    public synchronized void restartTask(long taskId){
+        XLDownloadManager.getInstance().stopTask(taskId);
+        XLDownloadManager.getInstance().startTask(taskId);
+    }
+
+    /**
      * 删除一个任务，会把文件也删掉
      * @param taskId
      * @param savePath

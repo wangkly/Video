@@ -42,7 +42,7 @@
         <activity android:name=".activities.DownloadActivity" />
         <activity
             android:name=".activities.WelcomeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/WelcomeTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

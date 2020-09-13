@@ -70,7 +70,7 @@ public class FilePickerActivity extends AppCompatActivity implements LocalFileAd
         mFilePickerList.setLayoutManager(new LinearLayoutManager(FilePickerActivity.this,RecyclerView.VERTICAL,false));
 //        mFilePickerList.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
 
-        initData();
+        initDataSortByModifyTime(false);
     }
 
 
@@ -222,7 +222,7 @@ public class FilePickerActivity extends AppCompatActivity implements LocalFileAd
         if(file.getType().equals(FileTyp.FOLDER)|| file.getType().equals(FileTyp.BACK)){
             String filePath = file.getFilePath();
             currentPath = filePath;
-            initData();
+            initDataSortByModifyTime(false);
         }else {
             //保存访问路径
             DBTools.getInstance().saveRecentVisitPath(file.getFilePath());
@@ -242,7 +242,7 @@ public class FilePickerActivity extends AppCompatActivity implements LocalFileAd
                 finish();
             }else {
                 currentPath = new File(currentPath).getParent();
-                initData();
+                initDataSortByModifyTime(false);
                 return true;
             }
         }

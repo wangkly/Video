@@ -98,7 +98,8 @@ public class MyPlayerView extends PlayerView {
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             Log.d("-------->playing","onSingleTapUp");
-            MyPlayerView.super.performClick();
+//            MyPlayerView.super.performClick();
+            mOptListener.onViewTap();
             return super.onSingleTapUp(e);
         }
 

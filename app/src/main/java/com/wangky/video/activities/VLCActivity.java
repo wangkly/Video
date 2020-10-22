@@ -465,6 +465,12 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
         mVlcController.setVisibility(View.VISIBLE);
     }
 
+
+    @Override
+    public void onViewTap() {
+
+    }
+
     public String formatProgress(long current, long duration){
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));

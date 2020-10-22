@@ -292,8 +292,10 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
 
             if(playbackState == Player.STATE_BUFFERING){
                 mLoading.setVisibility(View.VISIBLE);
+                playerView.showController();
             }else if(playbackState == Player.STATE_READY){
                 mLoading.setVisibility(View.GONE);
+                playerView.hideController();
             }
 
 
@@ -418,6 +420,13 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
     @Override
     public void onOperationStart() {
 
+    }
+
+    @Override
+    public void onViewTap() {
+        if(mLoading.getVisibility() != View.VISIBLE){
+            playerView.performClick();
+        }
     }
 
     public String formatProgress(long current, long duration){

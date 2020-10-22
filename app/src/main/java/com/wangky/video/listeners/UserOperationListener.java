@@ -6,6 +6,8 @@ package com.wangky.video.listeners;
  */
 public interface UserOperationListener{
 
+    void onViewTap();
+
     void onVideoVolumeChange(float percent);
 
     void onViewBrightnessChange(float percent);

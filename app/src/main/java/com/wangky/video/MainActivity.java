@@ -1,17 +1,11 @@
 package com.wangky.video;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -27,15 +21,10 @@ import com.wangky.video.activities.TorrentDetailActivity;
 import com.wangky.video.activities.VLCActivity;
 import com.wangky.video.adapter.VideoListAdapter;
 import com.wangky.video.beans.LocalVideoItem;
-import com.wangky.video.enums.MessageType;
-import com.wangky.video.event.TaskEvent;
+import com.wangky.video.services.MyNotificationService;
 import com.wangky.video.task.SaveThumbnailTask;
 import com.wangky.video.util.FileUtils;
 import com.wangky.video.util.Utils;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,7 +35,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -65,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private VideoListAdapter adapter;
 
     private long time = 0;
-
-    private NotificationManager nManager;
 
 
     private View.OnClickListener mListener= new View.OnClickListener() {
@@ -107,8 +93,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
 //        ActionBar actionBar = getSupportActionBar();
 
 //        if(null != actionBar){
@@ -136,21 +120,26 @@ public class MainActivity extends AppCompatActivity {
             remainOperation();
         }
 
-
-
+        Intent intent =  new Intent(MainActivity.this, MyNotificationService.class);
+        startService(intent);
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
-        EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Intent intent =  new Intent(MainActivity.this, MyNotificationService.class);
+        stopService(intent);
+        super.onDestroy();
     }
 
     public void remainOperation(){
@@ -327,32 +316,4 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-
-    /**
-     * Notification在android 8.0以上设置时，需要设置渠道信息才能够正常显示通知
-     * @param event
-     */
-    @TargetApi(Build.VERSION_CODES.O)
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventMessage(TaskEvent event){
-        MessageType message = event.getMessage();
-
-
-        String channelId = "my_channel_01";
-
-        NotificationChannel mChannel = new NotificationChannel(channelId, "my_channel", NotificationManager.IMPORTANCE_LOW);
-        nManager.createNotificationChannel(mChannel);
-
-
-        Notification notification = new NotificationCompat
-                .Builder(getApplicationContext(),channelId)
-                .setContentTitle("通知")
-                .setContentText(message.name())
-                .setSmallIcon(R.drawable.ic_download)
-                .setWhen(System.currentTimeMillis())
-                .build();
-
-        nManager.notify(1,notification);
-
-    }
 }

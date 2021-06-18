@@ -1,5 +1,8 @@
 package com.wangky.video.model;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import com.wangky.video.MyApplication;
 import com.wangky.video.beans.DownloadTaskEntity;
 import com.wangky.video.beans.TorrentInfoEntity;
@@ -16,6 +19,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class DownLoadModelImp implements DownLoadModel {
@@ -242,7 +247,6 @@ public class DownLoadModelImp implements DownLoadModel {
         if(null != already){
             XLTaskHelper.instance(MyApplication.getInstance()).stopTask(already.getTaskId());
         }
-        //重新启动
         startTask(already);
         return already;
     }

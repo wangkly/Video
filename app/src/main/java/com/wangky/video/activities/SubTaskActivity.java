@@ -35,13 +35,18 @@ public class SubTaskActivity extends AppCompatActivity {
             RecyclerView.ViewHolder holder = (RecyclerView.ViewHolder) v.getTag();
             int position = holder.getAdapterPosition();
             TorrentInfoEntity file = mList.get(position);
-            String localUrl = mTaskHelper.getLocalUrl(file.getPath());
-
             Intent intent = new Intent(SubTaskActivity.this, PlayActivity.class);
+            String localUrl;
+            if(mTaskId == -1){
+                localUrl = file.getPath();
+                intent.putExtra("taskId",0);
+            }else{
+                localUrl= mTaskHelper.getLocalUrl(file.getPath());
+                intent.putExtra("taskId",mTaskId);
+            }
             intent.putExtra("LOrientation",true);
             intent.putExtra("data",localUrl);
             intent.putExtra("title",file.getmFileName());
-            intent.putExtra("taskId",mTaskId);
             intent.putExtra("hash",hash);
             startActivity(intent);
 

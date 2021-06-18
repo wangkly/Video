@@ -3,10 +3,16 @@ package com.wangky.video.activities;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.wangky.video.R;
 import com.wangky.video.adapter.DownloadListAdapter;
 import com.wangky.video.beans.DownloadTaskEntity;
 import com.wangky.video.beans.TorrentInfoEntity;
+import com.wangky.video.dao.DBTools;
 import com.wangky.video.enums.MessageType;
 import com.wangky.video.event.TaskEvent;
 import com.wangky.video.model.DownLoadModel;
@@ -23,11 +29,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 public class DownloadActivity extends AppCompatActivity {
 
     private RecyclerView downloadList;
@@ -42,7 +43,7 @@ public class DownloadActivity extends AppCompatActivity {
     private DownloadListAdapter.OnOperationBtnClick mClickListener = new DownloadListAdapter.OnOperationBtnClick() {
 
         @Override
-        public void onDelete(DownloadTaskEntity task) {
+        public void onDelete(DownloadTaskEntity task,int position) {
             String[] items = {"同时删除本地文件"};
             boolean[] bool= {false};
             new AlertDialog.Builder(DownloadActivity.this)
@@ -57,19 +58,28 @@ public class DownloadActivity extends AppCompatActivity {
                         }
 
                         dialog.dismiss();
+                        tasks.remove(position);
+                        downloadListAdapter.notifyItemRemoved(position);
                     })
                     .setNegativeButton("取消", (dialog, which) -> dialog.dismiss())
                     .create().show();
         }
 
         @Override
-        public void onStart(DownloadTaskEntity task) {
+        public void onStart(DownloadTaskEntity task,int position) {
             downLoadModel.startTask(task);
+           DownloadTaskEntity ta = tasks.get(position);
+           ta.setmTaskStatus(Const.DOWNLOAD_CONNECTION);
+            downloadListAdapter.notifyItemChanged(position);
         }
 
         @Override
-        public void onPause(DownloadTaskEntity task) {
+        public void onPause(DownloadTaskEntity task,int position) {
             downLoadModel.stopTask(task);
+            DownloadTaskEntity ta = tasks.get(position);
+            ta.setmTaskStatus(Const.DOWNLOAD_STOP);
+            ta.setmDownloadSpeed(0);
+            downloadListAdapter.notifyItemChanged(position);
         }
 
         @Override
@@ -83,7 +93,11 @@ public class DownloadActivity extends AppCompatActivity {
             Intent intent = new Intent(DownloadActivity.this,SubTaskActivity.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable("subTasks", (Serializable) subs);
-            bundle.putLong("taskId",task.getTaskId());
+            if(DownUtil.isDownSuccess(task)){
+                bundle.putLong("taskId",-1);
+            }else{
+                bundle.putLong("taskId",task.getTaskId());
+            }
             bundle.putString("hash",task.getHash());
             intent.putExtras(bundle);
             startActivity(intent);
@@ -100,30 +114,38 @@ public class DownloadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_download);
         setTitle("下载列表");
         downLoadModel = new DownLoadModelImp();
-
         downloadList = findViewById(R.id.downloadList);
 
+        tasks = DBTools.getInstance().findALLTask();
+
         downloadListAdapter = new DownloadListAdapter(DownloadActivity.this,tasks,mClickListener);
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(DownloadActivity.this);
-
         downloadList.setAdapter(downloadListAdapter);
-
         downloadList.setLayoutManager(layoutManager);
-
         //启动service更新UI
         Intent intent = new Intent(DownloadActivity.this, DownloadService.class);
         startService(intent);
-
     }
 
-
-
     public void refreshData(List<DownloadTaskEntity> data){
-        tasks.clear();
-        tasks.addAll(data);
-
-        downloadListAdapter.notifyDataSetChanged();
+        for(DownloadTaskEntity task : data){
+            int i;
+            for(i = 0 ; i < tasks.size(); i++){
+                DownloadTaskEntity out = tasks.get(i);
+                if(out.getHash().equalsIgnoreCase(task.getHash())){//对应任务
+                    out.setmDownloadSpeed(task.getmDownloadSpeed());
+                    out.setTaskId(task.getTaskId());
+                    if(out.getmTaskStatus()!= task.getmTaskStatus()){
+                        out.setmTaskStatus(task.getmTaskStatus());
+                    }
+                    out.setmDCDNSpeed(task.getmDCDNSpeed());
+                    out.setmDownloadSpeed(task.getmDownloadSpeed());
+                    out.setmDownloadSize(task.getmDownloadSize());
+                    out.setmFileSize(task.getmFileSize());
+                    downloadListAdapter.notifyItemChanged(i);
+                }
+            }
+        }
     }
 
 
@@ -132,9 +154,9 @@ public class DownloadActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         //停止更新页面
-        DownUtil.getInstance().setIsLoopDown(false);
-        Intent intent = new Intent(DownloadActivity.this, DownloadService.class);
-        stopService(intent);
+//        DownUtil.getInstance().setIsLoopDown(false);
+//        Intent intent = new Intent(DownloadActivity.this, DownloadService.class);
+//        stopService(intent);
         super.onDestroy();
     }
 

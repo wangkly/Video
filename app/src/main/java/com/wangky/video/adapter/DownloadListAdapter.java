@@ -18,7 +18,10 @@ import com.wangky.video.util.FileUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapter.ItemViewHolder> {
 
@@ -154,7 +157,7 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
             itemView.setOnLongClickListener(v -> {
                 int position = getAdapterPosition();
                 DownloadTaskEntity entity = mTasks.get(position);
-                mBtnClick.onDelete(entity);
+                mBtnClick.onDelete(entity,position);
                 return true;
             });
 
@@ -171,12 +174,12 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
             DownloadTaskEntity entity = mTasks.get(position);
             switch (v.getId()){
                 case R.id.down_start:
-                    mBtnClick.onStart(entity);
+                    mBtnClick.onStart(entity,position);
                     start.setVisibility(View.GONE);
                     pause.setVisibility(View.VISIBLE);
                     break;
                 case R.id.pause:
-                    mBtnClick.onPause(entity);
+                    mBtnClick.onPause(entity,position);
                     start.setVisibility(View.VISIBLE);
                     pause.setVisibility(View.GONE);
                     break;
@@ -190,15 +193,13 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
     }
 
 
-
-
     public interface OnOperationBtnClick{
 
-        void onDelete(DownloadTaskEntity task);
+        void onDelete(DownloadTaskEntity task,int position);
 
-        void onStart(DownloadTaskEntity task);
+        void onStart(DownloadTaskEntity task,int position);
 
-        void onPause(DownloadTaskEntity task);
+        void onPause(DownloadTaskEntity task,int position);
 
         void onDetail(DownloadTaskEntity task);
 

@@ -28,7 +28,7 @@ public class DownUtil {
         return isLoopDown;
     }
 
-    public void setIsLoopDown(boolean isLoopDown) {
+    public synchronized void setIsLoopDown(boolean isLoopDown) {
         DownUtil.isLoopDown = isLoopDown;
     }
 }

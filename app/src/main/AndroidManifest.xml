@@ -20,7 +20,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.FilePickerActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
+        <service
+            android:name=".services.MyNotificationService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity
+            android:name=".activities.FilePickerActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.OpenVideoFileActivity">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
@@ -63,9 +70,10 @@
         <!-- <activity android:name=".activities.WebViewActivity"></activity> -->
         <activity android:name=".activities.MagnetActivity" />
         <activity android:name=".activities.TorrentDetailActivity" />
-        <activity android:name=".activities.VLCActivity"
+        <activity
+            android:name=".activities.VLCActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

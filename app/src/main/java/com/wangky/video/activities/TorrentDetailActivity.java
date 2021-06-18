@@ -16,6 +16,7 @@ import com.wangky.video.beans.DownloadTaskEntity;
 import com.wangky.video.beans.TorrentInfoEntity;
 import com.wangky.video.model.DownLoadModel;
 import com.wangky.video.model.DownLoadModelImp;
+import com.wangky.video.services.DownloadService;
 import com.wangky.video.util.Const;
 import com.wangky.video.util.FileUtils;
 import com.xunlei.downloadlib.XLTaskHelper;
@@ -51,8 +52,11 @@ public class TorrentDetailActivity extends AppCompatActivity {
           RecyclerView.ViewHolder holder = (RecyclerView.ViewHolder) v.getTag();
           int position = holder.getAdapterPosition();
             TorrentFileInfo file = mList.get(position);
-
             DownloadTaskEntity task = downLoadModel.startTorrentTask(path,new int[]{file.mFileIndex});
+            //启动更新的下载进度的service
+            Intent serviceIntent = new Intent(TorrentDetailActivity.this, DownloadService.class);
+            startService(serviceIntent);
+
             if(null != task && null !=task.getSubTasks()){
                 List<TorrentInfoEntity> subs = task.getSubTasks();
                 //找出当前对应的子任务

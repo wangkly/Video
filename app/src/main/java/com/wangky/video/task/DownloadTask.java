@@ -9,14 +9,10 @@ public class DownloadTask extends AsyncTask<Void,Void,Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-
             while (DownUtil.getInstance().isIsLoopDown()){
                 //更新ui
                 System.out.println("---------更新UI--------");
-
                 UpdateUI.getInstance().UpdateDownloadUI();
-
-
                 SystemClock.sleep(1000);
             }
 

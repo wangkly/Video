@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,12 +39,15 @@ import com.wangky.video.listeners.UserOperationListener;
 import com.wangky.video.model.DownLoadModel;
 import com.wangky.video.model.DownLoadModelImp;
 import com.wangky.video.util.FileUtils;
+import com.wangky.video.view.MetaDialogFragment;
 import com.wangky.video.view.OperationDialogFragment;
 import com.xunlei.downloadlib.XLTaskHelper;
 import com.xunlei.downloadlib.parameter.XLTaskInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
+
+import wseemann.media.FFmpegMediaMetadataRetriever;
 
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FILL;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT;
@@ -60,6 +64,8 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
     private ImageButton mBack;
     private TextView mTitle;
     private ImageButton mToggle;
+    private ImageButton mShowInfo;
+    private ImageButton mVlc;
     private TextView mCurrentSpeed;//用于显示当前时间
     private TextView mCurrentTime;//用于显示当前时间
     private ImageButton mMoreOperation;//更多操作
@@ -132,6 +138,8 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         mBack = findViewById(R.id.m_back);
         mTitle = findViewById(R.id.m_title);
         mToggle = findViewById(R.id.exo_toggle);
+        mShowInfo = findViewById(R.id.exo_showInfo);
+        mVlc = findViewById(R.id.exo_vlc);
         mLoading = findViewById(R.id.loading);
         mCurrentTime = findViewById(R.id.current_time);
         mCurrentSpeed = findViewById(R.id.current_speed);
@@ -183,6 +191,32 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
             }
         });
 
+        mShowInfo.setOnClickListener(v->{
+            FFmpegMediaMetadataRetriever retriever = new  FFmpegMediaMetadataRetriever();
+            retriever.setDataSource(vPath);
+            String frameRate = retriever.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_FRAMERATE);
+            String fileSize =  retriever.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_FILESIZE);
+            String bitRate =  retriever.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_VARIANT_BITRATE);
+            MetaDialogFragment fragment = new MetaDialogFragment();
+            retriever.release();
+            MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
+            metaRetriever.setDataSource(vPath);
+            String height = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
+            String width = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+            bitRate = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
+            metaRetriever.release();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("orientation",mLOrientation);
+            bundle.putSerializable("frameRate",frameRate);
+            bundle.putSerializable("fileName",title);
+            bundle.putSerializable("fileSize",FileUtils.getFileSize(Long.valueOf(fileSize)));
+            bundle.putSerializable("bitRate",bitRate);
+            bundle.putSerializable("resolution",width+"*"+height);
+            fragment.setArguments(bundle);
+            fragment.show(getSupportFragmentManager(),"metaFragment");
+        });
+
+
         mMoreOperation.setOnClickListener(v -> {
             OperationDialogFragment fragment = new OperationDialogFragment();
             float speed = player.getPlaybackParameters().speed;
@@ -196,7 +230,14 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
 
         });
 
-
+        mVlc.setOnClickListener(v->{
+            Intent vlcIntent = new Intent(PlayActivity.this, VLCActivity.class);
+            vlcIntent.putExtra("LOrientation",false);
+            vlcIntent.putExtra("data",vPath);
+            vlcIntent.putExtra("title",vTitle);
+            startActivity(vlcIntent);
+            finish();
+        });
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);

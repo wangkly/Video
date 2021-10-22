@@ -112,8 +112,11 @@ public class UpdateUI {
             public void run() {
                 //如果有需要重启的任务
                 if(needsRestarts.size() > 0){
-                    new Thread(new RestartTask(needsRestarts)).start();
+                   ArrayList<DownloadTaskEntity> newArr =  new ArrayList<>(needsRestarts);
+                    new Thread(new RestartTask(newArr)).start();
                 }
+                //清空
+                needsRestarts.clear();
             }
         };
         timer.schedule(timerTask,1000,60000);

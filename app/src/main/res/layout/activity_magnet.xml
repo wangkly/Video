@@ -8,6 +8,7 @@
 
 
     <com.google.android.material.textfield.TextInputLayout
+        app:endIconMode="clear_text"
         android:id="@+id/magnetInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

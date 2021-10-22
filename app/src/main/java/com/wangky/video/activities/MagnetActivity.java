@@ -4,9 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.wangky.video.R;
@@ -16,8 +17,6 @@ import com.xunlei.downloadlib.parameter.XLTaskInfo;
 import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import static com.wangky.video.util.Const.DOWNLOAD_FAIL;
 import static com.wangky.video.util.Const.DOWNLOAD_SUCCESS;

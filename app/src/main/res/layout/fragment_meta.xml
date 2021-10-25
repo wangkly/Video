@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="#99000000"
          >
         <LinearLayout
             android:layout_width="match_parent"
@@ -14,11 +15,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:textSize="20dp"
                 android:text="文件名">
 
             </TextView>
             <TextView
                 android:id="@+id/meta_name"
+                android:textColor="#fff"
+                android:textSize="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
             </TextView>
@@ -29,12 +34,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
+                android:textColor="#fff"
+                android:textSize="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="文件大小">
             </TextView>
             <TextView
                 android:id="@+id/meta_size"
+                android:textColor="#fff"
+                android:textSize="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 >
@@ -47,12 +56,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:textSize="20dp"
                 android:text="分辨率">
             </TextView>
             <TextView
                 android:id="@+id/meta_resolution"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:textSize="20dp"
                 >
             </TextView>
         </LinearLayout>
@@ -63,12 +76,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:textSize="20dp"
                 android:text="帧率">
 
             </TextView>
 
             <TextView
                 android:id="@+id/meta_rate"
+                android:textColor="#fff"
+                android:textSize="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 >
@@ -83,11 +100,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:textSize="20dp"
                 android:text="码率"
                 >
             </TextView>
             <TextView
                 android:id="@+id/meta_bitRate"
+                android:textColor="#fff"
+                android:textSize="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 >

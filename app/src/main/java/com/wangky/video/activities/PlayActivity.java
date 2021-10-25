@@ -35,16 +35,23 @@ import com.google.android.exoplayer2.util.Util;
 import com.wangky.video.MyPlayerView;
 import com.wangky.video.R;
 import com.wangky.video.beans.DownloadTaskEntity;
+import com.wangky.video.enums.MessageType;
+import com.wangky.video.event.TaskEvent;
 import com.wangky.video.listeners.UserOperationListener;
 import com.wangky.video.model.DownLoadModel;
 import com.wangky.video.model.DownLoadModelImp;
+import com.wangky.video.util.Const;
 import com.wangky.video.util.FileUtils;
 import com.wangky.video.view.MetaDialogFragment;
 import com.wangky.video.view.OperationDialogFragment;
 import com.xunlei.downloadlib.XLTaskHelper;
-import com.xunlei.downloadlib.parameter.XLTaskInfo;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.TimeZone;
 
 import wseemann.media.FFmpegMediaMetadataRetriever;
@@ -194,26 +201,30 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         mShowInfo.setOnClickListener(v->{
             FFmpegMediaMetadataRetriever retriever = new  FFmpegMediaMetadataRetriever();
             retriever.setDataSource(vPath);
-            String frameRate = retriever.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_FRAMERATE);
-            String fileSize =  retriever.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_FILESIZE);
-            String bitRate =  retriever.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_VARIANT_BITRATE);
-            MetaDialogFragment fragment = new MetaDialogFragment();
-            retriever.release();
-            MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
-            metaRetriever.setDataSource(vPath);
-            String height = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
-            String width = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-            bitRate = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
-            metaRetriever.release();
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("orientation",mLOrientation);
-            bundle.putSerializable("frameRate",frameRate);
-            bundle.putSerializable("fileName",title);
-            bundle.putSerializable("fileSize",FileUtils.getFileSize(Long.valueOf(fileSize)));
-            bundle.putSerializable("bitRate",bitRate);
-            bundle.putSerializable("resolution",width+"*"+height);
-            fragment.setArguments(bundle);
-            fragment.show(getSupportFragmentManager(),"metaFragment");
+            try {
+                String frameRate = retriever.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_FRAMERATE);
+                String fileSize =  retriever.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_FILESIZE);
+                String bitRate =  retriever.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_VARIANT_BITRATE);
+                MetaDialogFragment fragment = new MetaDialogFragment();
+                retriever.release();
+                MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
+                metaRetriever.setDataSource(vPath);
+                String height = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
+                String width = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+                bitRate = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
+                metaRetriever.release();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("orientation",mLOrientation);
+                bundle.putSerializable("frameRate",frameRate);
+                bundle.putSerializable("fileName",title);
+                bundle.putSerializable("fileSize",FileUtils.getFileSize(Long.valueOf(fileSize)));
+                bundle.putSerializable("bitRate",FileUtils.downloadSpeed(Long.valueOf(bitRate)));
+                bundle.putSerializable("resolution",width+"*"+height);
+                fragment.setArguments(bundle);
+                fragment.show(getSupportFragmentManager(),"metaFragment");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         });
 
 
@@ -247,12 +258,12 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         mUpdateTime = true;
         this.updateCurrentTime();
 
-        if(taskId != 0){
-            mUpdateSpeed = true;
-            mCurrentSpeed.setVisibility(View.VISIBLE);
-            this.updateCurrentSpeed();
-
-        }
+//        if(taskId != 0){
+//            mUpdateSpeed = true;
+//            mCurrentSpeed.setVisibility(View.VISIBLE);
+//            this.updateCurrentSpeed();
+//
+//        }
 
     }
 
@@ -505,40 +516,75 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
     /**
      * 更新下载进度
      */
-    private void updateCurrentSpeed() {
-        new Thread(() -> {
-            while (mUpdateSpeed){
-                //延迟两秒
-                try {
-                    Thread.sleep( 1000 );
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                XLTaskInfo taskInfo = mTaskHelper.getTaskInfo(taskId);
-                Log.i("mTaskStatus ==>",String.valueOf(taskInfo.mTaskStatus));
-                Log.i("mDownloadSpeed ==>",String.valueOf(taskInfo.mDownloadSpeed));
-                if((taskInfo.mDownloadSpeed ==0 && taskInfo.mTaskStatus !=0) || taskInfo.mTaskStatus == 3 || taskInfo.mTaskStatus == 4){
-                    restartDownloadTask();
-                }
-                runOnUiThread(() -> mCurrentSpeed.setText(FileUtils.downloadSpeed(taskInfo.mDownloadSpeed)));
-            }
-        }).start();
+//    private void updateCurrentSpeed() {
+//        new Thread(() -> {
+//            while (mUpdateSpeed){
+//                //延迟两秒
+//                try {
+//                    Thread.sleep( 1000 );
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                XLTaskInfo taskInfo = mTaskHelper.getTaskInfo(taskId);
+//                Log.i("mTaskStatus ==>",String.valueOf(taskInfo.mTaskStatus));
+//                Log.i("mDownloadSpeed ==>",String.valueOf(taskInfo.mDownloadSpeed));
+//                if((taskInfo.mDownloadSpeed ==0 && taskInfo.mTaskStatus !=0) || taskInfo.mTaskStatus == 3 || taskInfo.mTaskStatus == 4){
+//                    restartDownloadTask();
+//                }
+//                runOnUiThread(() -> mCurrentSpeed.setText(FileUtils.downloadSpeed(taskInfo.mDownloadSpeed)));
+//            }
+//        }).start();
+//
+//    }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
 
-    /**
-     * 重启下载任务
+    /***
+     * 更新下载进度
+     * @param event
      */
-    public void restartDownloadTask(){
-        if(System.currentTimeMillis() - mCurrentTimeStamp > 30 * 1000){//30秒重试一次
-            Log.i("task ==>","尝试重启");
-            DownloadTaskEntity task = downLoadModel.restartDownloadTask(hash);
-            taskId = task.getTaskId();
-            mCurrentTimeStamp = System.currentTimeMillis();
-        }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateDownloadTaskUI(TaskEvent event){
+        if(event.getMessage().equals(MessageType.UPDATE_UI)){
+            List<DownloadTaskEntity> tasks = event.getTasks();
+            for (DownloadTaskEntity entity:tasks){
+                if(entity.getHash().equalsIgnoreCase(hash)){
+                    if(entity.getmTaskStatus() != Const.DOWNLOAD_SUCCESS){
+                       String speed =  FileUtils.downloadSpeed(entity.getmDownloadSpeed());
+                        Log.i("PlayActivity","更新下载速度" + speed);
+                        mCurrentSpeed.setVisibility(View.VISIBLE);
+                        runOnUiThread(() -> mCurrentSpeed.setText(speed));
+                        Log.i("mTaskStatus ==>",String.valueOf(entity.getmTaskStatus()));
+                    }
+                }
+            }
 
+        }
     }
+
+
+//    /**
+//     * 重启下载任务
+//     */
+//    public void restartDownloadTask(){
+//        if(System.currentTimeMillis() - mCurrentTimeStamp > 30 * 1000){//30秒重试一次
+//            Log.i("task ==>","尝试重启");
+//            DownloadTaskEntity task = downLoadModel.restartDownloadTask(hash);
+//            taskId = task.getTaskId();
+//            mCurrentTimeStamp = System.currentTimeMillis();
+//        }
+//    }
 
 
     /**

@@ -1,7 +1,10 @@
 package com.wangky.video.activities;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,7 +20,8 @@ import com.wangky.video.enums.MessageType;
 import com.wangky.video.event.TaskEvent;
 import com.wangky.video.model.DownLoadModel;
 import com.wangky.video.model.DownLoadModelImp;
-import com.wangky.video.services.DownloadService;
+import com.wangky.video.services.DownloadManageService;
+import com.wangky.video.task.DownloadTasksManager;
 import com.wangky.video.util.Const;
 import com.wangky.video.util.DownUtil;
 
@@ -38,6 +42,10 @@ public class DownloadActivity extends AppCompatActivity {
     private DownLoadModel downLoadModel;
 
     List<DownloadTaskEntity> tasks = new ArrayList<>();
+
+    private DownloadTasksManager downloadTasksManager;
+
+    private DownloadManageService downloadManageService;
 
 
     private DownloadListAdapter.OnOperationBtnClick mClickListener = new DownloadListAdapter.OnOperationBtnClick() {
@@ -60,6 +68,7 @@ public class DownloadActivity extends AppCompatActivity {
                         dialog.dismiss();
                         tasks.remove(position);
                         downloadListAdapter.notifyItemRemoved(position);
+                        downloadTasksManager.removeTask(task);
                     })
                     .setNegativeButton("取消", (dialog, which) -> dialog.dismiss())
                     .create().show();
@@ -71,6 +80,7 @@ public class DownloadActivity extends AppCompatActivity {
            DownloadTaskEntity ta = tasks.get(position);
            ta.setmTaskStatus(Const.DOWNLOAD_CONNECTION);
             downloadListAdapter.notifyItemChanged(position);
+            downloadTasksManager.addNewTask(task);
         }
 
         @Override
@@ -80,6 +90,7 @@ public class DownloadActivity extends AppCompatActivity {
             ta.setmTaskStatus(Const.DOWNLOAD_STOP);
             ta.setmDownloadSpeed(0);
             downloadListAdapter.notifyItemChanged(position);
+            downloadTasksManager.removeTask(task);
         }
 
         @Override
@@ -108,6 +119,21 @@ public class DownloadActivity extends AppCompatActivity {
         }
     };
 
+
+    private ServiceConnection connection =  new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            DownloadManageService.DownloadManagerBinder binder = ((DownloadManageService.DownloadManagerBinder)service);
+            downloadManageService = binder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            downloadManageService = null;
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,9 +148,14 @@ public class DownloadActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(DownloadActivity.this);
         downloadList.setAdapter(downloadListAdapter);
         downloadList.setLayoutManager(layoutManager);
+        downloadTasksManager = DownloadTasksManager.getInstance();
         //启动service更新UI
-        Intent intent = new Intent(DownloadActivity.this, DownloadService.class);
+//        Intent intent = new Intent(DownloadActivity.this, DownloadService.class);
+        Intent intent = new Intent(DownloadActivity.this, DownloadManageService.class);
         startService(intent);
+
+        bindService(intent,connection,BIND_AUTO_CREATE);
+
     }
 
     public void refreshData(List<DownloadTaskEntity> data){
@@ -149,14 +180,13 @@ public class DownloadActivity extends AppCompatActivity {
     }
 
 
-
-
     @Override
     protected void onDestroy() {
         //停止更新页面
 //        DownUtil.getInstance().setIsLoopDown(false);
 //        Intent intent = new Intent(DownloadActivity.this, DownloadService.class);
 //        stopService(intent);
+        unbindService(connection);
         super.onDestroy();
     }
 

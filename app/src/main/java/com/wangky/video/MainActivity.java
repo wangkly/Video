@@ -2,11 +2,14 @@ package com.wangky.video;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +24,7 @@ import com.wangky.video.activities.TorrentDetailActivity;
 import com.wangky.video.activities.VLCActivity;
 import com.wangky.video.adapter.VideoListAdapter;
 import com.wangky.video.beans.LocalVideoItem;
+import com.wangky.video.services.DownloadManageService;
 import com.wangky.video.services.MyNotificationService;
 import com.wangky.video.task.SaveThumbnailTask;
 import com.wangky.video.util.FileUtils;
@@ -85,6 +89,18 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,8 +136,9 @@ public class MainActivity extends AppCompatActivity {
             remainOperation();
         }
 
-        Intent intent =  new Intent(MainActivity.this, MyNotificationService.class);
+        Intent intent =  new Intent(MainActivity.this, DownloadManageService.class);
         startService(intent);
+        bindService(intent,connection,BIND_AUTO_CREATE);
     }
 
 
@@ -137,8 +154,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Intent intent =  new Intent(MainActivity.this, MyNotificationService.class);
+        Intent intent =  new Intent(MainActivity.this, DownloadManageService.class);
         stopService(intent);
+        unbindService(connection);
         super.onDestroy();
     }
 

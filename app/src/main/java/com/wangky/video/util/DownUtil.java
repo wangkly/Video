@@ -5,7 +5,7 @@ import com.wangky.video.beans.DownloadTaskEntity;
 public class DownUtil {
     private static DownUtil downUtil=null;
     private static boolean isLoopDown=false;
-    public DownUtil(){
+    private DownUtil(){
 
     }
     public static synchronized DownUtil getInstance() {

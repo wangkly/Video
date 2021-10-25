@@ -2,7 +2,11 @@ package com.wangky.video.enums;
 
 public enum MessageType {
 
-    UPDATE_UI(0,"更新下载任务"),STOP_TASK(1,"停止任务");
+    UPDATE_UI(0,"更新下载任务"),
+    STOP_TASK(1,"停止任务"),
+    DEL_TASK(2,"删除任务"),
+    RESTART_UPDATE_UI(3,"重启更新列表"),
+    RESTARTED(4,"任务重启");
 
     private Integer value;
 

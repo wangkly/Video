@@ -67,6 +67,7 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
     private final String TAG = "PlayActivity.class";
 
     private XLTaskHelper mTaskHelper;
+    private DataSource.Factory mDataSourceFactory;
     private SimpleExoPlayer player;
     private ImageButton mBack;
     private TextView mTitle;
@@ -162,9 +163,9 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         player = ExoPlayerFactory.newSimpleInstance(this);
         player.setSeekParameters(SeekParameters.NEXT_SYNC);
         playerView.setPlayer(player);
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this,"Video"));
+        mDataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this,"Video"));
 
-        MediaSource videoSource = new ProgressiveMediaSource.Factory(dataSourceFactory).
+        MediaSource videoSource = new ProgressiveMediaSource.Factory(mDataSourceFactory).
                 createMediaSource(Uri.parse(data));
 
 
@@ -375,6 +376,14 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         public void onPlayerError(ExoPlaybackException error) {
             Log.i(TAG,"error===>"+error.getMessage());
             Toast.makeText(PlayActivity.this,"出错了。。。",Toast.LENGTH_SHORT).show();
+
+            long current = player.getCurrentPosition();
+
+            MediaSource videoSource = new ProgressiveMediaSource.Factory(mDataSourceFactory).
+                    createMediaSource(Uri.parse(vPath));
+            player.setPlayWhenReady(true);
+            player.prepare(videoSource);
+            player.seekTo(current);
 
 //            Intent intent = new Intent(PlayActivity.this, VLCActivity.class);
 //            intent.putExtra("LOrientation",false);

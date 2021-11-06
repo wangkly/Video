@@ -14,18 +14,22 @@ import com.wangky.video.R;
 import com.wangky.video.adapter.TorrentFileListAdapter;
 import com.wangky.video.beans.DownloadTaskEntity;
 import com.wangky.video.beans.TorrentInfoEntity;
+import com.wangky.video.enums.MessageType;
+import com.wangky.video.event.TaskEvent;
 import com.wangky.video.model.DownLoadModel;
 import com.wangky.video.model.DownLoadModelImp;
-import com.wangky.video.services.DownloadService;
 import com.wangky.video.util.Const;
 import com.wangky.video.util.FileUtils;
 import com.xunlei.downloadlib.XLTaskHelper;
 import com.xunlei.downloadlib.parameter.TorrentFileInfo;
 import com.xunlei.downloadlib.parameter.TorrentInfo;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class TorrentDetailActivity extends AppCompatActivity {
@@ -53,9 +57,10 @@ public class TorrentDetailActivity extends AppCompatActivity {
           int position = holder.getAdapterPosition();
             TorrentFileInfo file = mList.get(position);
             DownloadTaskEntity task = downLoadModel.startTorrentTask(path,new int[]{file.mFileIndex});
-            //启动更新的下载进度的service
-            Intent serviceIntent = new Intent(TorrentDetailActivity.this, DownloadService.class);
-            startService(serviceIntent);
+
+            //把task加入更新列表
+            TaskEvent event =  new TaskEvent(MessageType.ADD_TASK, Collections.singletonList(task));
+            EventBus.getDefault().post(event);
 
             if(null != task && null !=task.getSubTasks()){
                 List<TorrentInfoEntity> subs = task.getSubTasks();

@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -23,6 +24,7 @@ import com.wangky.video.enums.MessageType;
 import com.wangky.video.event.TaskEvent;
 import com.wangky.video.task.DownloadManagerTask;
 import com.wangky.video.task.DownloadTasksManager;
+import com.wangky.video.task.RestartTask;
 import com.wangky.video.util.DownUtil;
 import com.wangky.video.util.FileUtils;
 
@@ -33,6 +35,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 public class DownloadManageService extends Service {
+
+    private final String TAG = "DownloadManageService";
     private String channelId = "my_channel_01";
 
     private DownloadTasksManager tasksManager;
@@ -53,6 +57,7 @@ public class DownloadManageService extends Service {
         @Override
         public void onTaskRemoved() {
             if(tasksManager.getDownloadingList().size() == 0){
+                Log.i(TAG,"下载列表为空，更新任务暂停");
                 DownUtil.getInstance().setIsLoopDown(false);// 设置后AsyncTask中会暂停
             }
         }
@@ -115,13 +120,25 @@ public class DownloadManageService extends Service {
      * 已完成的任务，把它从更新列表中移除
      * @param event
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void removeTasks(TaskEvent event){
         if(event.getMessage().equals(MessageType.DEL_TASK)){
             List<DownloadTaskEntity> tasks = event.getTasks();
             for(DownloadTaskEntity entity:tasks){
                 this.tasksManager.removeTask(entity);
             }
+        }
+    }
+
+    /**
+     * 新添加任务，加入更新列表
+     * @param event
+     */
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void AddTask(TaskEvent event){
+        if(event.getMessage().equals(MessageType.ADD_TASK)){
+            List<DownloadTaskEntity> tasks = event.getTasks();
+            this.tasksManager.addNewTask(tasks.get(0));
         }
     }
 
@@ -137,14 +154,29 @@ public class DownloadManageService extends Service {
         }
     }
 
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    /**
+     * 重启后更新taskId之类信息
+     * @param event
+     */
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void updateReStartTaskId(TaskEvent event){
         if(event.getMessage().equals(MessageType.RESTARTED)){
             List<DownloadTaskEntity> tasks = event.getTasks();
             for(DownloadTaskEntity entity:tasks){
                 this.tasksManager.updateTargetTask(entity);
             }
+        }
+    }
+
+    /**
+     *重启需要更新的任务
+     * @param event
+     */
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void restartTask(TaskEvent event){
+        if(event.getMessage().equals(MessageType.RESTART_TASK)){
+            List<DownloadTaskEntity> tasks = event.getTasks();
+            new Thread(new RestartTask(tasks)).start();
         }
     }
 

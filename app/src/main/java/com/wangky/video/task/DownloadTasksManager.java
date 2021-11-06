@@ -23,7 +23,14 @@ public class DownloadTasksManager {
     private DownloadListListener downloadTasksChangeListener ;
 
     public List<DownloadTaskEntity> getDownloadingList() {
-        return downloadingList;
+        synchronized (DownloadTasksManager.class){
+            //返回downloadingList 的副本
+            List<DownloadTaskEntity> copy =  new ArrayList<>();
+            for(DownloadTaskEntity entity:this.downloadingList){
+                copy.add(entity);
+            }
+            return copy;
+        }
     }
 
     public void setDownloadTasksChangeListener(DownloadListListener downloadTasksChangeListener) {

@@ -149,8 +149,7 @@ public class DownloadActivity extends AppCompatActivity {
         downloadList.setAdapter(downloadListAdapter);
         downloadList.setLayoutManager(layoutManager);
         downloadTasksManager = DownloadTasksManager.getInstance();
-        //启动service更新UI
-//        Intent intent = new Intent(DownloadActivity.this, DownloadService.class);
+
         Intent intent = new Intent(DownloadActivity.this, DownloadManageService.class);
         startService(intent);
 
@@ -182,10 +181,6 @@ public class DownloadActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        //停止更新页面
-//        DownUtil.getInstance().setIsLoopDown(false);
-//        Intent intent = new Intent(DownloadActivity.this, DownloadService.class);
-//        stopService(intent);
         unbindService(connection);
         super.onDestroy();
     }
@@ -212,8 +207,6 @@ public class DownloadActivity extends AppCompatActivity {
         if(event.getMessage().equals(MessageType.UPDATE_UI)){
             List<DownloadTaskEntity> tasks = event.getTasks();
             refreshData(tasks);
-        }else if(event.getMessage().equals(MessageType.STOP_TASK)){
-            refreshData(new ArrayList<>());
         }
     }
 

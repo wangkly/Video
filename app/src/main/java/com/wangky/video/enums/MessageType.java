@@ -6,7 +6,9 @@ public enum MessageType {
     STOP_TASK(1,"停止任务"),
     DEL_TASK(2,"删除任务"),
     RESTART_UPDATE_UI(3,"重启更新列表"),
-    RESTARTED(4,"任务重启");
+    RESTARTED(4,"任务重启"),
+    ADD_TASK(5,"添加任务"),
+    RESTART_TASK(6,"重启任务");
 
     private Integer value;
 

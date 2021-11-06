@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import com.wangky.video.listeners.MyExceptionHandler;
 import com.xunlei.downloadlib.XLTaskHelper;
 
 public class MyApplication extends Application {
@@ -15,6 +16,8 @@ public class MyApplication extends Application {
         super.onCreate();
         instance = this;
         XLTaskHelper.init(this);
+
+        Thread.setDefaultUncaughtExceptionHandler(MyExceptionHandler.getInstance());
     }
 
     public static MyApplication getInstance() {

@@ -49,7 +49,7 @@ public class UpdateManagerUI {
         if(subTasks.size() > 0){
             for(DownloadTaskEntity task : subTasks){
                 //非暂停或等待的任务，------>进行中的任务/成功的任务
-                if (task.getmTaskStatus() != Const.DOWNLOAD_STOP && task.getmTaskStatus() != Const.DOWNLOAD_WAIT) {
+                if (task.getmTaskStatus() != Const.DOWNLOAD_STOP && task.getmTaskStatus() != Const.DOWNLOAD_WAIT && task.getTaskId() != -1) {
                     //获取当前任务状态
                     XLTaskInfo taskInfo = XLTaskHelper.instance(MyApplication.getInstance()).getTaskInfo(task.getTaskId());
                     task.setTaskId(taskInfo.mTaskId);
@@ -112,25 +112,6 @@ public class UpdateManagerUI {
             EventBus.getDefault().post(event);
         }
     }
-
-
-//    public static void  initRestartTimer(){
-//        Timer timer = new Timer();
-//        TimerTask timerTask = new TimerTask() {
-//            @Override
-//            public void run() {
-//                //如果有需要重启的任务
-//                if(needsRestarts.size() > 0){
-//                Log.i("initRestartTimer","重启任务开始-->"+System.currentTimeMillis());
-//                   ArrayList<DownloadTaskEntity> newArr =  new ArrayList<>(needsRestarts);
-//                    new Thread(new RestartTask(newArr)).start();
-//                    //清空
-//                    needsRestarts.clear();
-//                }
-//            }
-//        };
-//        timer.schedule(timerTask,1000,30000);
-//    }
 
 
 }

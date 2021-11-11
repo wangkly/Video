@@ -32,7 +32,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DownloadManageService extends Service {
 
@@ -40,6 +43,18 @@ public class DownloadManageService extends Service {
     private String channelId = "my_channel_01";
 
     private DownloadTasksManager tasksManager;
+
+    private  List<DownloadTaskEntity> needsRestarts;
+    public synchronized List<DownloadTaskEntity> getNeedsRestarts() {
+        return needsRestarts;
+    }
+
+    public synchronized void setNeedsRestarts(List<DownloadTaskEntity> needsRestarts) {
+        this.needsRestarts = needsRestarts;
+    }
+
+
+    private  Timer timer = new Timer();
 
     private NotificationManager nManager;
 
@@ -49,6 +64,7 @@ public class DownloadManageService extends Service {
         @Override
         public void onNewTaskAdded() {
             if(!DownUtil.getInstance().isIsLoopDown()){//如果添加新任务时，flag=false,需要重启更新服务
+                Log.i(TAG,"有新任务添加，需要重新启动更新");
                 TaskEvent event =  new TaskEvent(MessageType.RESTART_UPDATE_UI);
                 EventBus.getDefault().post(event);
             }
@@ -74,8 +90,9 @@ public class DownloadManageService extends Service {
         nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel mChannel = new NotificationChannel(channelId, "my_channel", NotificationManager.IMPORTANCE_LOW);
         nManager.createNotificationChannel(mChannel);
-         this.tasksManager = DownloadTasksManager.getInstance();
-         this.tasksManager.setDownloadTasksChangeListener(downloadListListener);
+        this.tasksManager = DownloadTasksManager.getInstance();
+        this.tasksManager.setDownloadTasksChangeListener(downloadListListener);
+        this.initRestartTimer();
         EventBus.getDefault().register(this);
     }
 
@@ -113,6 +130,27 @@ public class DownloadManageService extends Service {
         // 内部更新的逻辑肯定要在子线程中执行，
         new DownloadManagerTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
+
+    /**
+     * 定时重启任务
+     */
+    public  void  initRestartTimer(){
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                //如果有需要重启的任务
+                if(needsRestarts.size() > 0){
+                Log.i("initRestartTimer","重启任务开始-->"+System.currentTimeMillis());
+                    ArrayList<DownloadTaskEntity> newArr = new ArrayList<>(getNeedsRestarts());
+                    new Thread(new RestartTask(newArr)).start();
+                    //清空
+                    needsRestarts.clear();
+                }
+            }
+        };
+        timer.schedule(timerTask,1000,10000);
+    }
+
 
 
 
@@ -176,7 +214,7 @@ public class DownloadManageService extends Service {
     public void restartTask(TaskEvent event){
         if(event.getMessage().equals(MessageType.RESTART_TASK)){
             List<DownloadTaskEntity> tasks = event.getTasks();
-            new Thread(new RestartTask(tasks)).start();
+            this.setNeedsRestarts(tasks);
         }
     }
 

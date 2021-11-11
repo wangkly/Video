@@ -21,15 +21,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SeekParameters;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.wangky.video.MyPlayerView;
@@ -38,8 +39,6 @@ import com.wangky.video.beans.DownloadTaskEntity;
 import com.wangky.video.enums.MessageType;
 import com.wangky.video.event.TaskEvent;
 import com.wangky.video.listeners.UserOperationListener;
-import com.wangky.video.model.DownLoadModel;
-import com.wangky.video.model.DownLoadModelImp;
 import com.wangky.video.util.Const;
 import com.wangky.video.util.FileUtils;
 import com.wangky.video.view.MetaDialogFragment;
@@ -66,9 +65,8 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
 
     private final String TAG = "PlayActivity.class";
 
-    private XLTaskHelper mTaskHelper;
     private DataSource.Factory mDataSourceFactory;
-    private SimpleExoPlayer player;
+    private ExoPlayer player;
     private ImageButton mBack;
     private TextView mTitle;
     private ImageButton mToggle;
@@ -118,15 +116,10 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
     private long taskId;
     private String hash;
 
-    //当前时间戳
-    private long mCurrentTimeStamp = 0;
-
-    private DownLoadModel downLoadModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTaskHelper= XLTaskHelper.instance(this);
         //隐藏title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //设置全屏
@@ -134,7 +127,6 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         setContentView(R.layout.activity_play);
         //播放器事件监听
         eventListener = new PlayerEventListener();
-        downLoadModel=new DownLoadModelImp();
 
         brightness = findViewById(R.id.brightness);
         volume_view = findViewById(R.id.volume);
@@ -160,13 +152,13 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         vPath = data;
         vTitle = title;
         playerView = findViewById(R.id.player);
-        player = ExoPlayerFactory.newSimpleInstance(this);
+        player = new ExoPlayer.Builder(PlayActivity.this).build();;
         player.setSeekParameters(SeekParameters.NEXT_SYNC);
         playerView.setPlayer(player);
-        mDataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this,"Video"));
-
+        mDataSourceFactory = new DefaultDataSource.Factory(this);
+        MediaItem item = MediaItem.fromUri(Uri.parse(data));
         MediaSource videoSource = new ProgressiveMediaSource.Factory(mDataSourceFactory).
-                createMediaSource(Uri.parse(data));
+                createMediaSource(item);
 
 
      //m3u8
@@ -179,9 +171,9 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
 //                        .setAllowChunklessPreparation(true)
 //                        .createMediaSource(uri);
 
+        player.setMediaSource(videoSource);
+        player.prepare();
         player.setPlayWhenReady(true);
-        player.prepare(videoSource);
-
         player.addListener(eventListener);
 
 
@@ -259,13 +251,6 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         mUpdateTime = true;
         this.updateCurrentTime();
 
-//        if(taskId != 0){
-//            mUpdateSpeed = true;
-//            mCurrentSpeed.setVisibility(View.VISIBLE);
-//            this.updateCurrentSpeed();
-//
-//        }
-
     }
 
 
@@ -291,9 +276,6 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         volume_view.setVisibility(View.GONE);
         progress_tip.setVisibility(View.GONE);
 
-//        new Handler().postDelayed(() -> {
-//
-//        },1000);
     }
 
 
@@ -316,10 +298,10 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
     }
 
 
-    class PlayerEventListener implements Player.EventListener{
+    class PlayerEventListener implements Player.Listener{
 
         @Override
-        public void onLoadingChanged(boolean isLoading) {
+        public void onIsLoadingChanged(boolean isLoading) {
             Log.i(TAG,"onLoadingChanged===> " +isLoading);
 //            if(isLoading){
 //                mLoading.setVisibility(View.VISIBLE);
@@ -329,7 +311,6 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         }
 
         /**
-         * @param playWhenReady
          * @param playbackState
          * com.google.android.exoplayer2.Player#STATE_IDLE  空闲 1
          * com.google.android.exoplayer2.Player#STATE_BUFFERING 缓冲中 2
@@ -340,7 +321,7 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
          * The player is only playing if the state is Player.STATE_READY and playWhenReady=true
          */
         @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        public void onPlaybackStateChanged(int playbackState) {
             Log.i(TAG,"onPlayerStateChanged===> "+ playbackState);
 
             if(playbackState == Player.STATE_BUFFERING){
@@ -349,6 +330,7 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
             }else if(playbackState == Player.STATE_READY){
                 mLoading.setVisibility(View.GONE);
                 playerView.hideController();
+//                player.play();
             }
 
 
@@ -373,24 +355,17 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         }
 
         @Override
-        public void onPlayerError(ExoPlaybackException error) {
+        public void onPlayerError(PlaybackException error) {
             Log.i(TAG,"error===>"+error.getMessage());
             Toast.makeText(PlayActivity.this,"出错了。。。",Toast.LENGTH_SHORT).show();
 
             long current = player.getCurrentPosition();
-
+            MediaItem item = MediaItem.fromUri(Uri.parse(vPath));
             MediaSource videoSource = new ProgressiveMediaSource.Factory(mDataSourceFactory).
-                    createMediaSource(Uri.parse(vPath));
+                    createMediaSource(item);
             player.setPlayWhenReady(true);
-            player.prepare(videoSource);
+            player.setMediaSource(videoSource);
             player.seekTo(current);
-
-//            Intent intent = new Intent(PlayActivity.this, VLCActivity.class);
-//            intent.putExtra("LOrientation",false);
-//            intent.putExtra("data",vPath);
-//            intent.putExtra("title",vTitle);
-//            startActivity(intent);
-//            finish();
         }
     }
 
@@ -495,7 +470,6 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
         String hms = formatter.format(current);
         String total = formatter.format(duration);
-//        Log.e(TAG,"formatProgress===> "+ hms+"/"+total);
         return hms +"/"+total;
     }
 
@@ -514,37 +488,10 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
                 long currentTimestamp = System.currentTimeMillis();
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
                 String time = formatter.format(currentTimestamp);
-//                    Date currentTime =Calendar.getInstance().getTime();
-//                    String time = formatter.format(currentTime);
-
                 runOnUiThread(() -> mCurrentTime.setText(time));
             }
         }).start();
     }
-
-    /**
-     * 更新下载进度
-     */
-//    private void updateCurrentSpeed() {
-//        new Thread(() -> {
-//            while (mUpdateSpeed){
-//                //延迟两秒
-//                try {
-//                    Thread.sleep( 1000 );
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                XLTaskInfo taskInfo = mTaskHelper.getTaskInfo(taskId);
-//                Log.i("mTaskStatus ==>",String.valueOf(taskInfo.mTaskStatus));
-//                Log.i("mDownloadSpeed ==>",String.valueOf(taskInfo.mDownloadSpeed));
-//                if((taskInfo.mDownloadSpeed ==0 && taskInfo.mTaskStatus !=0) || taskInfo.mTaskStatus == 3 || taskInfo.mTaskStatus == 4){
-//                    restartDownloadTask();
-//                }
-//                runOnUiThread(() -> mCurrentSpeed.setText(FileUtils.downloadSpeed(taskInfo.mDownloadSpeed)));
-//            }
-//        }).start();
-//
-//    }
 
 
     @Override
@@ -581,19 +528,6 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
 
         }
     }
-
-
-//    /**
-//     * 重启下载任务
-//     */
-//    public void restartDownloadTask(){
-//        if(System.currentTimeMillis() - mCurrentTimeStamp > 30 * 1000){//30秒重试一次
-//            Log.i("task ==>","尝试重启");
-//            DownloadTaskEntity task = downLoadModel.restartDownloadTask(hash);
-//            taskId = task.getTaskId();
-//            mCurrentTimeStamp = System.currentTimeMillis();
-//        }
-//    }
 
 
     /**

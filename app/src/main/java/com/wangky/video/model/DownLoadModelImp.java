@@ -17,8 +17,11 @@ import com.xunlei.downloadlib.parameter.XLTaskInfo;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -147,6 +150,7 @@ public class DownLoadModelImp implements DownLoadModel {
             taskId = XLTaskHelper.instance(MyApplication.getInstance()).addTorrentTask(btpath, savePath,indexs);
             XLTaskInfo taskInfo = XLTaskHelper.instance(MyApplication.getInstance()).getTaskInfo(taskId);
             task.setLocalPath(savePath);
+            task.setTorrentPath(btpath);
             task.setFile(!torrentInfo.mIsMultiFiles);
             task.setHash(torrentInfo.mInfoHash);
             task.setUrl(btpath);
@@ -211,28 +215,26 @@ public class DownLoadModelImp implements DownLoadModel {
 //                TorrentInfo torrentInfo= XLTaskHelper.instance(MyApplication.getInstance()).getTorrentInfo(task.getUrl());
                 //取任务中已存在的子任务
                 List<TorrentInfoEntity> subs = task.getSubTasks();
-                int[] indexs = new int[subs.size()];
-                int i=0;
-//                indexs=new int[torrentInfo.mSubFileInfo.length];
-//                for(TorrentFileInfo torrent:torrentInfo.mSubFileInfo) {
-//                    indexs[i++]=torrent.mFileIndex;
-//                }
-
+                Set<Integer> sets = new HashSet();
                 for(TorrentInfoEntity info : subs){
-                    indexs[i++]=info.getmFileIndex();
+                    sets.add(info.getmFileIndex());
                 }
-
+                int[] indexs = new int[sets.size()];
+                int i=0;
+                for (Integer item : sets ){
+                    indexs[i++] = item.intValue();
+                }
                 taskId = XLTaskHelper.instance(MyApplication.getInstance()).addTorrentTask(task.getUrl(), task.getLocalPath(),indexs);
             }else if(task.getTaskType()==Const.URL_DOWNLOAD){
                 taskId = XLTaskHelper.instance(MyApplication.getInstance()).addThunderTask(task.getUrl(), task.getLocalPath(), null);
             }
+            if(taskId==0 || taskId == -1)
+                return false;
             XLTaskInfo taskInfo = XLTaskHelper.instance(MyApplication.getInstance()).getTaskInfo(taskId);
             task.setmFileSize(taskInfo.mFileSize);
             task.setTaskId(taskId);
             task.setmTaskStatus(taskInfo.mTaskStatus);
             DBTools.getInstance().saveOrUpdate(task);
-            if(taskInfo.mTaskId==0)
-                return false;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

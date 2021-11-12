@@ -42,6 +42,7 @@ public class DBTools {
        values.put("taskType",entity.getTaskType());
        values.put("url",entity.getUrl());
        values.put("localPath",entity.getLocalPath());
+       values.put("torrentPath",entity.getTorrentPath());
        values.put("mDownloadSize",entity.getmDownloadSize());
        values.put("mDownloadSpeed",entity.getmDownloadSpeed());
        values.put("mDCDNSpeed",entity.getmDCDNSpeed());
@@ -88,6 +89,7 @@ public class DBTools {
         values.put("taskType",entity.getTaskType());
         values.put("url",entity.getUrl());
         values.put("localPath",entity.getLocalPath());
+        values.put("torrentPath",entity.getTorrentPath());
         values.put("mDownloadSize",entity.getmDownloadSize());
         values.put("mDownloadSpeed",entity.getmDownloadSpeed());
         values.put("mDCDNSpeed",entity.getmDCDNSpeed());
@@ -145,6 +147,7 @@ public class DBTools {
         values.put("taskType",entity.getTaskType());
         values.put("url",entity.getUrl());
         values.put("localPath",entity.getLocalPath());
+        values.put("torrentPath",entity.getTorrentPath());
         values.put("mDownloadSize",entity.getmDownloadSize());
         values.put("mDownloadSpeed",entity.getmDownloadSpeed());
         values.put("mDCDNSpeed",entity.getmDCDNSpeed());
@@ -190,6 +193,7 @@ public class DBTools {
               entity.setTaskType(cursor.getInt(cursor.getColumnIndex("taskType")));
               entity.setUrl(cursor.getString(cursor.getColumnIndex("url")));
               entity.setLocalPath(cursor.getString(cursor.getColumnIndex("localPath")));
+              entity.setTorrentPath(cursor.getString(cursor.getColumnIndex("torrentPath")));
               entity.setmDownloadSize(cursor.getLong(cursor.getColumnIndex("mDownloadSize")));
               entity.setmDownloadSpeed(cursor.getLong(cursor.getColumnIndex("mDownloadSpeed")));
               entity.setmDCDNSpeed(cursor.getLong(cursor.getColumnIndex("mDCDNSpeed")));
@@ -253,6 +257,7 @@ public class DBTools {
          entity.setTaskType(cursor.getInt(cursor.getColumnIndex("taskType")));
          entity.setUrl(cursor.getString(cursor.getColumnIndex("url")));
          entity.setLocalPath(cursor.getString(cursor.getColumnIndex("localPath")));
+         entity.setTorrentPath(cursor.getString(cursor.getColumnIndex("torrentPath")));
          entity.setmDownloadSize(cursor.getLong(cursor.getColumnIndex("mDownloadSize")));
          entity.setmDownloadSpeed(cursor.getLong(cursor.getColumnIndex("mDownloadSpeed")));
          entity.setmDCDNSpeed(cursor.getLong(cursor.getColumnIndex("mDCDNSpeed")));

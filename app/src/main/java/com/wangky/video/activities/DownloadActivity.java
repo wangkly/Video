@@ -110,6 +110,7 @@ public class DownloadActivity extends AppCompatActivity {
                 bundle.putLong("taskId",task.getTaskId());
             }
             bundle.putString("hash",task.getHash());
+            bundle.putString("torrentPath",task.getTorrentPath());
             intent.putExtras(bundle);
             startActivity(intent);
 

@@ -139,7 +139,7 @@ public class DownloadManageService extends Service {
             @Override
             public void run() {
                 //如果有需要重启的任务
-                if(needsRestarts.size() > 0){
+                if(null != needsRestarts && needsRestarts.size() > 0){
                 Log.i("initRestartTimer","重启任务开始-->"+System.currentTimeMillis());
                     ArrayList<DownloadTaskEntity> newArr = new ArrayList<>(getNeedsRestarts());
                     new Thread(new RestartTask(newArr)).start();

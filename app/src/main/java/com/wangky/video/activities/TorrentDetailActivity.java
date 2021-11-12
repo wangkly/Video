@@ -44,8 +44,6 @@ public class TorrentDetailActivity extends AppCompatActivity {
 
     private List<TorrentFileInfo> mList;
 
-//    private String type;
-
     private String path;//种子文件所在地址
 
     private DownLoadModel downLoadModel;
@@ -109,7 +107,6 @@ public class TorrentDetailActivity extends AppCompatActivity {
 
         mTaskHelper= XLTaskHelper.instance(this);
         Intent intent = getIntent();
-//         type = intent.getStringExtra("type");
          path = intent.getStringExtra("path");
 
          String fileFolder = FileUtils.getFileName(path);

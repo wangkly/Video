@@ -19,7 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
             "id integer primary key autoincrement," +
             "taskId integer , mTaskStatus integer, " +
             "mFileSize integer, mFileName text, " +
-            "taskType integer, url text, localPath text," +
+            "taskType integer, url text, localPath text, torrentPath text," +
             "mDownloadSize integer, mDownloadSpeed integer, " +
             "mDCDNSpeed integer, hash text, isFile integer, createDate integer, thumbnailPath text)";
 

@@ -3,12 +3,15 @@ package com.wangky.video.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.wangky.video.R;
 import com.wangky.video.adapter.TorrentTaskListAdapter;
 import com.wangky.video.beans.TorrentInfoEntity;
 import com.xunlei.downloadlib.XLTaskHelper;
 
+import java.io.File;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +30,7 @@ public class SubTaskActivity extends AppCompatActivity {
 
     private long mTaskId = 0;
     private String hash;
+    private String torrentPath;
 
 
     private View.OnClickListener mListener = new View.OnClickListener() {
@@ -56,7 +60,7 @@ public class SubTaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sub_task);
+        setContentView(R.layout.activity_sub_task_wrap);
         setTitle("任务详情");
         mSubList = findViewById(R.id.subList);
 
@@ -65,6 +69,7 @@ public class SubTaskActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mTaskId = intent.getLongExtra("taskId",0);
         hash = intent.getStringExtra("hash");
+        torrentPath = intent.getStringExtra("torrentPath");
         mList = (List<TorrentInfoEntity>) intent.getSerializableExtra("subTasks");
 
         adapter = new TorrentTaskListAdapter(this,mList,mListener);
@@ -78,6 +83,20 @@ public class SubTaskActivity extends AppCompatActivity {
 
         //分割线
         mSubList.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+
+        FloatingActionButton fab = findViewById(R.id.navToDetail);
+        fab.setOnClickListener(view -> {
+            if(null != this.torrentPath && this.torrentPath != ""){
+                File torrentFile =  new File(this.torrentPath);
+                if(torrentFile.exists()){
+                    Intent intent1 = new Intent(SubTaskActivity.this,TorrentDetailActivity.class);
+                    intent1.putExtra("path",this.torrentPath);
+                    startActivity(intent1);
+                }
+            }else{
+                Toast.makeText(SubTaskActivity.this,"文件已删除",Toast.LENGTH_LONG).show();
+            }
+        });
 
     }
 }

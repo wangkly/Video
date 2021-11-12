@@ -17,7 +17,7 @@ public class DownloadManagerTask extends AsyncTask<Void,Void,Void> {
             //更新ui
             Log.i(TAG,"---------更新UI--------");
             UpdateManagerUI.getInstance().UpdateDownloadUI();
-            SystemClock.sleep(3000);
+            SystemClock.sleep(1000);
         }
 
         return null;

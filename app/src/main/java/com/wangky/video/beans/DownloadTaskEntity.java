@@ -15,6 +15,7 @@ public class DownloadTaskEntity implements Serializable {
     private int taskType;
     private String url;
     private String localPath;
+    private String torrentPath;
     private long mDownloadSize;
     private long mDownloadSpeed;
     private long mDCDNSpeed;
@@ -105,6 +106,14 @@ public class DownloadTaskEntity implements Serializable {
 
     public void setLocalPath(String localPath) {
         this.localPath = localPath;
+    }
+
+    public String getTorrentPath() {
+        return torrentPath;
+    }
+
+    public void setTorrentPath(String torrentPath) {
+        this.torrentPath = torrentPath;
     }
 
     public long getmDownloadSize() {

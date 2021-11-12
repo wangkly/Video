@@ -146,6 +146,13 @@ public final class FileUtils {
         return name;
     }
 
+    public static String getFileSuffix(String path){
+        String suffix = "";
+        int index = path.lastIndexOf(".");
+        suffix = path.substring(index);
+        return  suffix;
+    }
+
     /**
      * 获取文件大小 kb,mb,gb
      * @param size

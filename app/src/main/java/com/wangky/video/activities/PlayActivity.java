@@ -31,8 +31,6 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 import com.wangky.video.MyPlayerView;
 import com.wangky.video.R;
 import com.wangky.video.beans.DownloadTaskEntity;
@@ -43,7 +41,6 @@ import com.wangky.video.util.Const;
 import com.wangky.video.util.FileUtils;
 import com.wangky.video.view.MetaDialogFragment;
 import com.wangky.video.view.OperationDialogFragment;
-import com.xunlei.downloadlib.XLTaskHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -463,6 +460,17 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         if(mLoading.getVisibility() != View.VISIBLE){
             playerView.performClick();
         }
+    }
+
+
+    @Override
+    public void onViewDoubleTap() {
+       if(player.isPlaying()){
+           player.pause();
+       }else {
+           player.play();
+       }
+       playerView.performClick();
     }
 
     public String formatProgress(long current, long duration){

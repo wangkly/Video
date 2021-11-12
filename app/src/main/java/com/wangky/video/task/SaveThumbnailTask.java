@@ -32,7 +32,6 @@ public class SaveThumbnailTask extends AsyncTask <List<String>,Void,Void>{
                 if(saveFile.exists()) {
                     continue;
                 }
-                Log.e("saveThumbnailTask====>",Thread.currentThread().getName());
                 retriever.setDataSource(path); //file's path
                 bitmap = retriever.getFrameAtTime(100000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC );
 

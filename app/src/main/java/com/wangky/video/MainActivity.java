@@ -16,6 +16,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.wangky.video.activities.DownloadActivity;
 import com.wangky.video.activities.FilePickerActivity;
 import com.wangky.video.activities.MagnetActivity;
@@ -25,7 +34,6 @@ import com.wangky.video.activities.VLCActivity;
 import com.wangky.video.adapter.VideoListAdapter;
 import com.wangky.video.beans.LocalVideoItem;
 import com.wangky.video.services.DownloadManageService;
-import com.wangky.video.services.MyNotificationService;
 import com.wangky.video.task.SaveThumbnailTask;
 import com.wangky.video.util.FileUtils;
 import com.wangky.video.util.Utils;
@@ -33,15 +41,6 @@ import com.wangky.video.util.Utils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
 

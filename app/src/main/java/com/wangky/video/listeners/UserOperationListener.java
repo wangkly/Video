@@ -8,6 +8,8 @@ public interface UserOperationListener{
 
     void onViewTap();
 
+    void onViewDoubleTap();
+
     void onVideoVolumeChange(float percent);
 
     void onViewBrightnessChange(float percent);

@@ -44,7 +44,7 @@ public class MyPlayerView extends PlayerView {
     private GestureDetector.SimpleOnGestureListener myGestureListener = new GestureDetector.SimpleOnGestureListener(){
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-//            Log.d("-------->playing","scroll");
+            Log.d("-------->playing","scroll");
             //distanceX e1.getX() - e2.getX(); 正数 向右滑动 负数向左滑动
             //distanceY e1.getY() - e2.getY(); 正数 从上往下滑动 负数从下往上滑动
             float oldX = e1.getX();
@@ -92,6 +92,7 @@ public class MyPlayerView extends PlayerView {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             Log.i("-------->playing","onDoubleTap");
+            mOptListener.onViewDoubleTap();
             return super.onDoubleTap(e);
         }
 

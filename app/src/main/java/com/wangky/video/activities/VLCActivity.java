@@ -471,6 +471,15 @@ public class VLCActivity extends AppCompatActivity implements UserOperationListe
 
     }
 
+    @Override
+    public void onViewDoubleTap() {
+        if(mMediaPlayer.isPlaying()){
+            mMediaPlayer.pause();
+        }else {
+            mMediaPlayer.play();
+        }
+    }
+
     public String formatProgress(long current, long duration){
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));

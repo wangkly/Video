@@ -51,6 +51,10 @@ public class TorrentDetailActivity extends AppCompatActivity {
     private View.OnClickListener mListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            File folder = new File(DownloadDir);
+            if(!folder.exists()){
+                folder.mkdirs();
+            }
           RecyclerView.ViewHolder holder = (RecyclerView.ViewHolder) v.getTag();
           int position = holder.getAdapterPosition();
             TorrentFileInfo file = mList.get(position);
@@ -122,17 +126,7 @@ public class TorrentDetailActivity extends AppCompatActivity {
         TorrentFileInfo[] fileArr = info.mSubFileInfo;
         mList = Arrays.asList(fileArr);
         mAdapter.addFiles(mList);
-
-
         DownloadDir = Const.File_SAVE_PATH +File.separator+fileFolder;
-
-        File file = new File(DownloadDir);
-
-        if(!file.exists()){
-            file.mkdirs();
-        }
-
-
 
     }
 }

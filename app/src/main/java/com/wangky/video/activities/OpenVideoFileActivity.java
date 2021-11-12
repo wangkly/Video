@@ -19,6 +19,14 @@ public class OpenVideoFileActivity extends AppCompatActivity {
         Uri uri =  getIntent().getData();
         String path = FileUtils.getFilePathByUri(OpenVideoFileActivity.this, uri);
         if(null != path){
+            String suffix = FileUtils.getFileSuffix(path);
+            if(suffix.equalsIgnoreCase(".torrent")){
+                Intent TorrentIntent = new Intent(OpenVideoFileActivity.this,TorrentDetailActivity.class);
+                TorrentIntent.putExtra("path",path);
+                startActivity(TorrentIntent);
+                finish();
+                return;
+            }
             String name = FileUtils.getFileName(path);
             Intent intent = new Intent(OpenVideoFileActivity.this,PlayActivity.class);
             intent.putExtra("LOrientation",false);

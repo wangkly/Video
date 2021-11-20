@@ -3,7 +3,6 @@ package com.wangky.video.task;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.wangky.video.util.Const;
 import com.wangky.video.util.MD5Util;
@@ -13,8 +12,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import wseemann.media.FFmpegMediaMetadataRetriever;
-
 public class SaveThumbnailTask extends AsyncTask <List<String>,Void,Void>{
 
 
@@ -23,8 +20,7 @@ public class SaveThumbnailTask extends AsyncTask <List<String>,Void,Void>{
         String saveDir =  Const.THUMBNAIL_SAVE_PATH;
         List<String> paths =  lists[0];
         Bitmap bitmap;
-        FFmpegMediaMetadataRetriever retriever = new  FFmpegMediaMetadataRetriever();
-//        MediaMetadataRetriever retriever = new MediaMetadataRetriever();//用系统的MediaMetadataRetriever 存在截取不到缩略图的情况
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         for (String path: paths){
             try{
                 String md5Str = MD5Util.md5Encode32(path);
@@ -32,15 +28,11 @@ public class SaveThumbnailTask extends AsyncTask <List<String>,Void,Void>{
                 if(saveFile.exists()) {
                     continue;
                 }
-                retriever.setDataSource(path); //file's path
-                bitmap = retriever.getFrameAtTime(100000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC );
-
-//                android.media.ThumbnailUtils#createVideoThumbnail(java.io.File, android.util.Size, android.os.CancellationSignal)
 
                 //https://www.niwoxuexi.com/blog/cnbzlj/article/1017
 
                 retriever.setDataSource(path);
-                bitmap = retriever.getFrameAtTime();
+                bitmap = retriever.getFrameAtTime(-1,MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
 
                 if(null != bitmap){
                     //本地缓存一份

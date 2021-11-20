@@ -20,6 +20,11 @@ public class TorrentTaskListAdapter extends RecyclerView.Adapter<TorrentTaskList
 
     private Context mContext;
 
+
+    public void setmFlieList(List<TorrentInfoEntity> mFlieList) {
+        this.mFlieList = mFlieList;
+    }
+
     private List<TorrentInfoEntity> mFlieList;
 
     private View.OnClickListener mListener;

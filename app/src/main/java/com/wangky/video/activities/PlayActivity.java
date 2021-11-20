@@ -50,8 +50,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.TimeZone;
 
-import wseemann.media.FFmpegMediaMetadataRetriever;
-
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FILL;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT;
@@ -189,25 +187,21 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
         });
 
         mShowInfo.setOnClickListener(v->{
-            FFmpegMediaMetadataRetriever retriever = new  FFmpegMediaMetadataRetriever();
-            retriever.setDataSource(vPath);
+            MediaMetadataRetriever metaRetriever = new  MediaMetadataRetriever();
+            metaRetriever.setDataSource(vPath);
             try {
-                String frameRate = retriever.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_FRAMERATE);
-                String fileSize =  retriever.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_FILESIZE);
-                String bitRate =  retriever.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_VARIANT_BITRATE);
+                String frameRate = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CAPTURE_FRAMERATE);
+//                String fileSize =  retriever.extractMetadata(MediaMetadataRetriever.);
                 MetaDialogFragment fragment = new MetaDialogFragment();
-                retriever.release();
-                MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
-                metaRetriever.setDataSource(vPath);
                 String height = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
                 String width = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-                bitRate = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
+                String bitRate = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
                 metaRetriever.release();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("orientation",mLOrientation);
                 bundle.putSerializable("frameRate",frameRate);
                 bundle.putSerializable("fileName",title);
-                bundle.putSerializable("fileSize",FileUtils.getFileSize(Long.valueOf(fileSize)));
+//                bundle.putSerializable("fileSize",FileUtils.getFileSize(Long.valueOf(fileSize)));
                 bundle.putSerializable("bitRate",FileUtils.downloadSpeed(Long.valueOf(bitRate)));
                 bundle.putSerializable("resolution",width+"*"+height);
                 fragment.setArguments(bundle);

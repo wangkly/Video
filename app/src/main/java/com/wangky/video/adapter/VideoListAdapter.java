@@ -22,8 +22,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import wseemann.media.FFmpegMediaMetadataRetriever;
-
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
 
 
@@ -117,30 +115,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     }
 
 
-    /**
-     * 如果通过contentProvider获取不到视频的缩略图，
-     * 通过这个方法再去查找一次
-     * @param filePath 文件的路径
-     * @return bitmap 视频文件缩略图
-     */
-    public Bitmap getVideoThumbnailIfNull(String filePath){
-        Bitmap bitmap = null;
-            FFmpegMediaMetadataRetriever retriever = new  FFmpegMediaMetadataRetriever();
-            try {
-                retriever.setDataSource(filePath); //file's path
-                bitmap = retriever.getFrameAtTime(100000,FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC );
-                if(null != bitmap){
-                    //本地缓存一份
-                    saveBitmapToLocal(bitmap,filePath);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            finally{
-                retriever.release();
-            }
-           return bitmap;
-    }
 
     /**
      * 将bitmap保存到本地存储

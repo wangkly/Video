@@ -8,7 +8,9 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.wangky.video.R;
 import com.wangky.video.adapter.TorrentTaskListAdapter;
+import com.wangky.video.beans.DownloadTaskEntity;
 import com.wangky.video.beans.TorrentInfoEntity;
+import com.wangky.video.dao.DBTools;
 import com.xunlei.downloadlib.XLTaskHelper;
 
 import java.io.File;
@@ -97,6 +99,22 @@ public class SubTaskActivity extends AppCompatActivity {
                 Toast.makeText(SubTaskActivity.this,"文件已删除",Toast.LENGTH_LONG).show();
             }
         });
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        updateSubTaskList();
+        super.onResume();
+    }
+
+    public void updateSubTaskList(){
+        DownloadTaskEntity taskEntity =  DBTools.getInstance().findByHash(hash);
+        List<TorrentInfoEntity> subs = taskEntity.getSubTasks();
+        this.mList = subs;
+        adapter.setmFlieList(subs);
+        adapter.notifyDataSetChanged();
 
     }
 }

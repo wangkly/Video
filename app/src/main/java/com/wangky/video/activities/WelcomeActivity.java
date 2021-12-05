@@ -36,16 +36,6 @@ public class WelcomeActivity extends AppCompatActivity {
         //权限获取助手
         mPermissionHelper = new PermissionHelper(this);
         mPermissionHelper.setOnApplyPermissionListener(() -> nextOperation());
-
-        if(Build.VERSION.SDK_INT < 23){ //android 6.0 以下
-            nextOperation();
-        }else if(mPermissionHelper.isAllRequestedPermissionGranted()){ //授权了所有的权限
-            nextOperation();
-        }else {
-            //请求权限
-            mPermissionHelper.applyPermissions();
-        }
-
     }
 
 

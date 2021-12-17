@@ -233,7 +233,7 @@ public class DownloadManageService extends Service {
             NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
             for(DownloadTaskEntity task :tasks){
                 String notStr = "";
-                notStr += task.getmFileName();
+                notStr += task.getmFileName().substring(0,16);
                 notStr += " - " + FileUtils.downloadSpeed(task.getmDownloadSpeed());
                 inboxStyle.addLine(notStr);
             }

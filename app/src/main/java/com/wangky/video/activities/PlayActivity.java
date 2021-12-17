@@ -29,8 +29,10 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SeekParameters;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSource;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.wangky.video.MyPlayerView;
 import com.wangky.video.R;
 import com.wangky.video.beans.DownloadTaskEntity;
@@ -47,7 +49,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FILL;
@@ -165,6 +169,19 @@ public class PlayActivity extends AppCompatActivity implements UserOperationList
 //                new HlsMediaSource.Factory(dataSourceFactory)
 //                        .setAllowChunklessPreparation(true)
 //                        .createMediaSource(uri);
+
+//        DefaultHttpDataSource.Factory dataSourceFactory = new DefaultHttpDataSource.Factory();
+//        Map<String,String> map = new HashMap<>();
+//        map.put("User-Agent","Mozilla/5.0 (Linux; Android 11; Redmi K20 Pro Premium Edition Build/RKQ1.200826.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/89.0.4389.72 MQQBrowser/6.2 TBS/045811 Mobile Safari/537.36 MMWEBID/6029 MicroMessenger/8.0.15.2020(0x28000F3D) Process/tools WeChat/arm64 Weixin NetType/WIFI Language/zh_CN ABI/arm64");
+//        dataSourceFactory.setDefaultRequestProperties(map);
+
+//        DataSource.Factory dataSourceFactory = new DefaultHttpDataSource.Factory();
+//// Create a HLS media source pointing to a playlist uri.
+//        HlsMediaSource hlsMediaSource =
+//                new HlsMediaSource.Factory(dataSourceFactory)
+//                        .createMediaSource(MediaItem.fromUri("http://youku.cdn10-okzy.com-play.xosxx.com/hls_y2L5gFg7DTuF2gBaE9OO0OOuNRyUOO0OOsO000OTD0mdRvIHEgO000OcP9O2zZhJCS8FOt6Kkw0O0O00O0O0.m3u8"));
+////                        .createMediaSource(MediaItem.fromUri("https://iqiyi.sd-play.com/20211120/aFRROSCd/index.m3u8"));
+//        player.setMediaSource(hlsMediaSource);
 
         player.setMediaSource(videoSource);
         player.prepare();

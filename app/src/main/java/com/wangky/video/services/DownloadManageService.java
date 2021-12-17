@@ -96,6 +96,11 @@ public class DownloadManageService extends Service {
         EventBus.getDefault().register(this);
     }
 
+    /**ø
+     * 多次startService,onStartCommand会执行多次
+     * 判断DownUtil.getInstance().isIsLoopDown() 是否已经在执行，
+     * 如果已经在执行,则跳过
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(!DownUtil.getInstance().isIsLoopDown()){

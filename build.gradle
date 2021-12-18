@@ -16,6 +16,10 @@ buildscript {
 
 allprojects {
     repositories {
+        maven {
+            // All of React Native (JS, Android binaries) is installed from npm
+            url "$rootDir/node_modules/react-native/android"
+        }
         maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
 //        maven {
 //            url "https://dl.bintray.com/videolan/Android"

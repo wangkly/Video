@@ -47,6 +47,8 @@ public class PermissionHelper {
 
 	private final static int INTERNET_CODE = 103;
 
+	private final static int RN_CODE = 104;
+
 	private final static int WRITE_EXTERNAL_STORAGE_CODE = 102;
 
 	private final static int REQUEST_OPEN_APPLICATION_SETTINGS_CODE = 12345;
@@ -57,6 +59,7 @@ public class PermissionHelper {
 	private PermissionModel[] mPermissionModels = new PermissionModel[] {
 //			new PermissionModel("电话", Manifest.permission.READ_PHONE_STATE, "我们需要读取手机信息的权限来标识您的身份", READ_PHONE_STATE_CODE),
 			new PermissionModel("网络", Manifest.permission.INTERNET, "我们需要网络连接权限进行网络下载", INTERNET_CODE),
+			new PermissionModel("ReactNative", Manifest.permission.SYSTEM_ALERT_WINDOW, "RN调试", RN_CODE),
 			new PermissionModel("存储空间", Manifest.permission.WRITE_EXTERNAL_STORAGE, "我们需要您允许我们读写你的存储卡，以方便我们临时保存一些数据",
 					WRITE_EXTERNAL_STORAGE_CODE)
 	};

@@ -23,4 +23,9 @@
         android:title="@string/action_magnet"
         android:orderInCategory="150"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_RN"
+        android:title="@string/action_RN"
+        android:orderInCategory="150"
+        app:showAsAction="never"/>
 </menu>

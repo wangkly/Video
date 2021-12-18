@@ -29,6 +29,7 @@ import com.wangky.video.activities.DownloadActivity;
 import com.wangky.video.activities.FilePickerActivity;
 import com.wangky.video.activities.MagnetActivity;
 import com.wangky.video.activities.PlayActivity;
+import com.wangky.video.activities.RnActivity;
 import com.wangky.video.activities.TorrentDetailActivity;
 import com.wangky.video.activities.VLCActivity;
 import com.wangky.video.adapter.VideoListAdapter;
@@ -223,6 +224,11 @@ public class MainActivity extends AppCompatActivity {
         if(id == R.id.action_open_file){
             Intent intent = new Intent(MainActivity.this, FilePickerActivity.class);
             startActivityForResult(intent,CHOOSE_FILE);
+        }
+
+        if(id == R.id.action_RN){
+            Intent intent = new Intent(MainActivity.this, RnActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

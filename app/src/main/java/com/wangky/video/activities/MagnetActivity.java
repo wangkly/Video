@@ -104,15 +104,11 @@ public class MagnetActivity extends AppCompatActivity {
                 }
             };
 
-
-
             timer.schedule(timerTask,1000,1000);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
 

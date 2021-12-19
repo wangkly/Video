@@ -12,10 +12,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.facebook.react.BuildConfig;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactRootView;
+import com.facebook.react.bridge.CatalystInstance;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.common.LifecycleState;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.wangky.video.MyApplication;
 
 public class RnActivity extends AppCompatActivity implements DefaultHardwareBackBtnHandler {
 
@@ -28,7 +31,7 @@ public class RnActivity extends AppCompatActivity implements DefaultHardwareBack
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setTitle("RN页面");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -37,20 +40,26 @@ public class RnActivity extends AppCompatActivity implements DefaultHardwareBack
             }
         }
 
-        SoLoader.init(this, false);
-
         mReactRootView = new ReactRootView(this);
 
-        mReactInstanceManager = ReactInstanceManager.builder()
-                .setApplication(getApplication())
-                .setCurrentActivity(this)
-                .setBundleAssetName("index.android.bundle")
-                .setJSMainModulePath("index")
-                .addPackage(new MainReactPackage())
-                .setUseDeveloperSupport(BuildConfig.DEBUG)
-                .setInitialLifecycleState(LifecycleState.RESUMED)
-                .build();
-        mReactRootView.startReactApplication(mReactInstanceManager, "MyReactNativeApp", null);
+//        mReactInstanceManager = ReactInstanceManager.builder()
+//                .setApplication(getApplication())
+//                .setCurrentActivity(this)
+//                .setBundleAssetName("index.android.bundle")
+//                .setJSMainModulePath("index")
+//                .addPackage(new MainReactPackage())
+//                .setUseDeveloperSupport(BuildConfig.DEBUG)
+//                .setInitialLifecycleState(LifecycleState.RESUMED)
+//                .build();
+
+        mReactInstanceManager = MyApplication.getInstance().getReactNativeHost().getReactInstanceManager();
+
+//        加载自定义bundle
+//        ReactContext reactContext = mReactInstanceManager.getCurrentReactContext();
+//        CatalystInstance catalystInstance = reactContext.getCatalystInstance();
+//        catalystInstance.loadScriptFromAssets(getApplication().getAssets(),"assets://index.android.bundle",true);
+
+        mReactRootView.startReactApplication(mReactInstanceManager, "rnApp", null);
 
         setContentView(mReactRootView);
     }
@@ -58,6 +67,7 @@ public class RnActivity extends AppCompatActivity implements DefaultHardwareBack
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == OVERLAY_PERMISSION_REQ_CODE) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (!Settings.canDrawOverlays(this)) {
@@ -65,7 +75,7 @@ public class RnActivity extends AppCompatActivity implements DefaultHardwareBack
                 }
             }
         }
-        mReactInstanceManager.onActivityResult( this, requestCode, resultCode, data );
+        mReactInstanceManager.onActivityResult(this, requestCode, resultCode, data);
     }
 
     @Override
@@ -119,5 +129,15 @@ public class RnActivity extends AppCompatActivity implements DefaultHardwareBack
             return true;
         }
         return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if(keyCode == KeyEvent.KEYCODE_BACK) { //按下返回键
+            System.out.println("--------------back----------------");
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
